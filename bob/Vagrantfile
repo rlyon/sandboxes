@@ -1,0 +1,45 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |vagrant|
+  vagrant.vm.define "el5" do |config|
+    config.vm.box = "centos-5.10"
+    config.vm.box_url = "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-5.10_chef-provisionerless.box"
+    config.vm.provision :shell, path: "bootstrap-dev-el5.sh"
+    config.vm.hostname = "bob-el5"
+
+    config.vm.provider "virtualbox" do |vb|
+      vb.memory = 512
+      vb.customize ["modifyvm", :id, "--memory", "512"]
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    end
+  end
+
+  vagrant.vm.define "el6" do |config|
+    config.vm.box = "centos-6.5"
+    config.vm.box_url = "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-6.5_chef-provisionerless.box"
+    config.vm.provision :shell, path: "bootstrap-dev-el6.sh"
+    config.vm.hostname = "bob-el6"
+
+    config.vm.provider "virtualbox" do |vb|
+      vb.memory = 512
+      vb.customize ["modifyvm", :id, "--memory", "512"]
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    end
+  end
+
+  vagrant.vm.define "repo" do |config|
+    config.vm.box = "centos-6.5"
+    config.vm.box_url = "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-6.5_chef-provisionerless.box"
+    config.vm.provision :shell, path: "bootstrap-repo.sh"
+    config.vm.hostname = "bob-repo"
+
+    config.vm.provider "virtualbox" do |vb|
+      vb.memory = 512
+      vb.customize ["modifyvm", :id, "--memory", "512"]
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    end
+  end
+end

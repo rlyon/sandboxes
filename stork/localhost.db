@@ -1,0 +1,10 @@
+$TTL	86400;
+@	IN	SOA	localhost.	root.localhost. (
+				2014062501 ; serial
+				3H ; refresh
+				15 ; retry
+				1w ; expire
+				3h ; min
+				)
+	IN 	NS 	localhost.
+	IN	PTR	localhost.

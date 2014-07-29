@@ -1,0 +1,44 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |vagrant|
+  # Bring the nodes up first so we can configure them after the headnode installs
+  # gridengine
+  [["n01", 11], ["n02", 12]].each do |name, num|
+    vagrant.vm.define name do |config|
+      config.vm.box = "centos-6.5"
+      config.vm.box_url = "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-6.5_chef-provisionerless.box"
+      config.vm.provision :shell, path: "bootstrap-node.sh"
+
+      config.vm.network "private_network", ip: "10.10.10.#{num}"
+
+      config.vm.hostname = "its-genomics-#{name}"
+
+      config.vm.provider "virtualbox" do |vb|
+        vb.memory = 512
+        vb.customize ["modifyvm", :id, "--memory", "512"]
+        vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      end
+    end
+  end
+
+  [["hn", 10]].each do |name, num|
+    vagrant.vm.define name do |config|
+      config.vm.box = "centos-6.5"
+      config.vm.box_url = "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-6.5_chef-provisionerless.box"
+      config.vm.provision :shell, path: "bootstrap-head.sh"
+
+      config.vm.network "private_network", ip: "10.10.10.#{num}"
+
+      config.vm.hostname = "its-genomics-#{name}"
+
+      config.vm.provider "virtualbox" do |vb|
+        vb.memory = 512
+        vb.customize ["modifyvm", :id, "--memory", "512"]
+        vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      end
+    end
+  end
+end
