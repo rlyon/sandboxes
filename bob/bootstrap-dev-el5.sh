@@ -6,5 +6,5 @@ if ! [[ -f epel-release-5-4.noarch.rpm ]] ; then
 	yum -y --nogpgcheck localinstall epel-release-5-4.noarch.rpm
 fi
 
-yum -y install gcc make rpmdevtools rpmlint deltarpm rpm-build mock
+yum -y install yum-utils gcc make rpmdevtools rpmlint deltarpm rpm-build mock
 usermod -G mock vagrant

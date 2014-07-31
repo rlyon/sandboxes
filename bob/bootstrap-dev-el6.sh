@@ -6,5 +6,5 @@ if ! [[ -f epel-release-6-8.noarch.rpm ]] ; then
 	yum -y localinstall epel-release-6-8.noarch.rpm
 fi
 
-yum -y install gcc make rpmdevtools rpmlint deltarpm rpm-build mock
+yum -y install yum-utils gcc make rpmdevtools rpmlint deltarpm rpm-build mock
 usermod -G mock vagrant
