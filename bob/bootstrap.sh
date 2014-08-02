@@ -10,9 +10,6 @@ yum -y install yum-utils rpmdevtools rpmlint deltarpm rpm-build mock
 yum -y install gcc make 
 yum -y install nginx
 
-mkdir -p /yumrepo/wsurel/{el5,el6}/{i386,x86_64}
-chown -R vagrant:vagrant /yumrepo
-
 cat > /etc/nginx/nginx.conf << 'EOF'
 user              vagrant;
 worker_processes  1;
@@ -43,6 +40,7 @@ http {
 EOF
 
 cat > /etc/yum.repos.d/wsurel << 'EOF'
+[wsurel]
 name=IBEST Enterprise Linux - $basearch
 baseurl=http://localhost/wsurel/el$releasever/$basearch
 failovermethod=priority
@@ -51,47 +49,45 @@ gpgcheck=0
 EOF
 
 usermod -G mock vagrant
-cp /etc/mock/epel-5-i386.cfg /etc/mock/wsurel-5-i386.cfg
+
+echo "Configuring mock environments.  This will take a while"
+
+echo "Configuring wsurel-5-i386"
+head -n -1 /etc/mock/epel-5-i386.cfg | sed -e '$a\\' > /etc/mock/wsurel-5-i386.cfg
+cat /etc/yum.repos.d/wsurel | sed -e '$a\"""\' >> /etc/mock/wsurel-5-i386.cfg
 sed -i -e 's/epel-5-i386/wsurel-5-i386/g' /etc/mock/wsurel-5-i386.cfg
-cp /etc/mock/epel-5-x86_64.cfg /etc/mock/wsurel-5-x86_64.cfg
-sed -i -e 's/epel-5-x86_64/wsurel-5-x86_64/g' /etc/mock/wsurel-5-x86_64.cfg
-cp /etc/mock/epel-6-i386.cfg /etc/mock/wsurel-6-i386.cfg
-sed -i -e 's/epel-6-i386/wsurel-6-i386/g' /etc/mock/wsurel-6-i386.cfg
-cp /etc/mock/epel-6-x86_64.cfg /etc/mock/wsurel-6-x86_64.cfg
-sed -i -e 's/epel-6-x86_64/wsurel-6-x86_64/g' /etc/mock/wsurel-6-x86_64.cfg
-
-mkdir -p /etc/skel/buildroot.clean/{BUILD,RPMS,SOURCES,SRPMS,SPECS}
-sudo -u vagrant -i bash <<'EOL'
-cd
-cp -r /etc/skel/buildroot.clean ~/lmod 
-cp /vagrant/Lmod.spec ~/lmod/SPECS/.
-cp /vagrant/Lmod-* ~/lmod/SOURCES/.
-
-echo '%_topdir %(pwd)' > ~/.rpmmacros
-
-echo "Initializing up mock.  This will take a while"
-
-echo "Initializing wsurel-5-i386"
 /usr/bin/mock -r wsurel-5-i386 --init
-echo "Initializing wsurel-5-x86_64"
+
+echo "Configuring wsurel-5-x86_64"
+head -n -1 /etc/mock/epel-5-x86_64.cfg | sed -e '$a\\' > /etc/mock/wsurel-5-x86_64.cfg
+cat /etc/yum.repos.d/wsurel | sed -e '$a\"""\' >> /etc/mock/wsurel-5-x86_64.cfg
+sed -i -e 's/epel-5-x86_64/wsurel-5-x86_64/g' /etc/mock/wsurel-5-x86_64.cfg
 /usr/bin/mock -r wsurel-5-x86_64 --init
-echo "Initializing wsurel-6-i386"
+
+echo "Configuring wsurel-6-i386"
+head -n -1 /etc/mock/epel-6-i386.cfg | sed -e '$a\\' > /etc/mock/wsurel-6-i386.cfg
+cat /etc/yum.repos.d/wsurel | sed -e '$a\"""\' >> /etc/mock/wsurel-6-i386.cfg
+sed -i -e 's/epel-6-i386/wsurel-6-i386/g' /etc/mock/wsurel-6-i386.cfg
 /usr/bin/mock -r wsurel-6-i386 --init
-echo "Initializing wsurel-6-x86_64"
+
+echo "Configuring wsurel-6-x86_64"
+head -n -1 /etc/mock/epel-6-x86_64.cfg | sed -e '$a\\' > /etc/mock/wsurel-6-x86_64.cfg
+cat /etc/yum.repos.d/wsurel | sed -e '$a\"""\' >> /etc/mock/wsurel-6-x86_64.cfg
+sed -i -e 's/epel-6-x86_64/wsurel-6-x86_64/g' /etc/mock/wsurel-6-x86_64.cfg
 /usr/bin/mock -r wsurel-6-x86_64 --init
 
-cd lmod
-rpmbuild --nodeps -bs ~/rpmbuild/SPECS/Lmod.spec -D 'dist 0'
-/usr/bin/mock -r wsurel-5-i386 --rebuild ~/rpmbuild/SRPMS/Lmod-5.6.3-1.src.rpm
-/usr/bin/mock -r wsurel-5-x86_64 --rebuild ~/rpmbuild/SRPMS/Lmod-5.6.3-1.src.rpm
-/usr/bin/mock -r wsurel-6-i386 --rebuild ~/rpmbuild/SRPMS/Lmod-5.6.3-1.src.rpm
-/usr/bin/mock -r wsurel-6-x86_64 --rebuild ~/rpmbuild/SRPMS/Lmod-5.6.3-1.src.rpm
+mkdir -p /yumrepo/wsurel/{el5,el6}/{i386,x86_64}
+createrepo /yumrepo/wsurel/el5/i386
+createrepo /yumrepo/wsurel/el5/x86_64
+createrepo /yumrepo/wsurel/el6/i386
+createrepo /yumrepo/wsurel/el6/x86_64
+chown -R vagrant:vagrant /yumrepo
+mkdir -p /etc/skel/buildroot.clean/{BUILD,RPMS,SOURCES,SRPMS,SPECS}
 
-# next create the repo
-
+sudo -u vagrant -i bash <<'EOL'
+source /vagrant/functions.sh
+mock_rebuild wsurel 5 i386 /vagrant/Lmod.spec /vagrant/Lmod-5.6.3.tar.bz2
+mock_rebuild wsurel 5 x86_64 /vagrant/Lmod.spec /vagrant/Lmod-5.6.3.tar.bz2
+mock_rebuild wsurel 6 i386 /vagrant/Lmod.spec /vagrant/Lmod-5.6.3.tar.bz2
+mock_rebuild wsurel 6 x86_64 /vagrant/Lmod.spec /vagrant/Lmod-5.6.3.tar.bz2
 EOL
-
-# rpmbuild --nodeps -bs ~/rpmbuild/SPECS/Lmod.spec
-# mock -r wsurel-5-i386 --rebuild /home/vagrant/rpmbuild/SRPMS/Lmod-5.6.3-1.src.rpm
-
-# push over to repo and create
