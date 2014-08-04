@@ -6,10 +6,18 @@ if ! [[ -f epel-release-6-8.noarch.rpm ]] ; then
 	yum -y localinstall epel-release-6-8.noarch.rpm
 fi
 
-yum -y install yum-utils rpmdevtools rpmlint deltarpm rpm-build mock
+yum -y install createrepo yum-utils rpmdevtools rpmlint deltarpm rpm-build mock
 yum -y install gcc make 
-yum -y install nginx
 
+mkdir -p /yumrepo/wsurel/{el5,el6}/{i386,x86_64}
+createrepo /yumrepo/wsurel/el5/i386
+createrepo /yumrepo/wsurel/el5/x86_64
+createrepo /yumrepo/wsurel/el6/i386
+createrepo /yumrepo/wsurel/el6/x86_64
+chown -R vagrant:vagrant /yumrepo
+mkdir -p /etc/skel/buildroot.clean/{BUILD,RPMS,SOURCES,SRPMS,SPECS}
+
+yum -y install nginx
 cat > /etc/nginx/nginx.conf << 'EOF'
 user              vagrant;
 worker_processes  1;
@@ -38,6 +46,8 @@ http {
     }
 }
 EOF
+service nginx start
+chkconfig nginx on
 
 cat > /etc/yum.repos.d/wsurel << 'EOF'
 [wsurel]
@@ -76,14 +86,6 @@ cat /etc/yum.repos.d/wsurel | sed -e '$a\"""\' >> /etc/mock/wsurel-6-x86_64.cfg
 sed -i -e 's/epel-6-x86_64/wsurel-6-x86_64/g' /etc/mock/wsurel-6-x86_64.cfg
 /usr/bin/mock -r wsurel-6-x86_64 --init
 
-mkdir -p /yumrepo/wsurel/{el5,el6}/{i386,x86_64}
-createrepo /yumrepo/wsurel/el5/i386
-createrepo /yumrepo/wsurel/el5/x86_64
-createrepo /yumrepo/wsurel/el6/i386
-createrepo /yumrepo/wsurel/el6/x86_64
-chown -R vagrant:vagrant /yumrepo
-mkdir -p /etc/skel/buildroot.clean/{BUILD,RPMS,SOURCES,SRPMS,SPECS}
-
 sudo -u vagrant -i bash <<'EOL'
 source /vagrant/functions.sh
 mock_rebuild wsurel 5 i386 /vagrant/Lmod.spec /vagrant/Lmod-5.6.3.tar.bz2
@@ -91,3 +93,27 @@ mock_rebuild wsurel 5 x86_64 /vagrant/Lmod.spec /vagrant/Lmod-5.6.3.tar.bz2
 mock_rebuild wsurel 6 i386 /vagrant/Lmod.spec /vagrant/Lmod-5.6.3.tar.bz2
 mock_rebuild wsurel 6 x86_64 /vagrant/Lmod.spec /vagrant/Lmod-5.6.3.tar.bz2
 EOL
+
+pushd /usr/local/src
+if [[ ! -e gcc-4.8.3.tar.gz ]] ; then
+    wget -q http://www.netgull.com/gcc/releases/gcc-4.8.3/gcc-4.8.3.tar.gz
+fi
+if [[ ! -e gmp-4.3.2.tar.gz ]] ; then
+    wget -q ftp://ftp.gnu.org/gnu/gmp/gmp-4.3.2.tar.gz
+fi
+if [[ ! -e mpfr-2.4.2.tar.gz ]] ; then
+    wget -q http://www.mpfr.org/mpfr-2.4.2/mpfr-2.4.2.tar.gz
+fi
+if [[ ! -e  mpc-0.8.1.tar.gz ]] ; then
+    wget -q http://www.multiprecision.org/mpc/download/mpc-0.8.1.tar.gz
+fi
+if [[ ! -e isl-0.12.2.tar.gz ]] ; then
+    wget -q http://isl.gforge.inria.fr/isl-0.12.2.tar.gz
+fi
+if [[ ! -e cloog-0.18.1.tar.gz ]] ; then
+    wget -q http://www.bastoul.net/cloog/pages/download/count.php3?url=./cloog-0.18.1.tar.gz
+fi
+if [[ ! -e  zlib-1.2.8.tar.gz ]]; then
+    wget -q http://zlib.net/zlib-1.2.8.tar.gz
+fi
+popd
