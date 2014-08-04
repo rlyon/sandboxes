@@ -1,5 +1,5 @@
 %define package_name 	cloog
-%define package_family	gcc49
+%define package_family	gcc48
 %define package_type 	compilers
 %define software_path	/opt/software
 %define package_path	%{software_path}/%{package_type}/%{package_family}
@@ -16,11 +16,11 @@ Vendor: CentOS
 Packager: Rob Lyon <rob.lyon@wsu.edu>
 Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildRequires: Lmod
-BuildRequires: compilers-gcc49-gmp
-BuildRequires: compilers-gcc49-isl
+BuildRequires: compilers-%{package_family}-gmp
+BuildRequires: compilers-%{package_family}-isl
 Requires: Lmod
-Requires: compilers-gcc49-gmp
-Requires: compilers-gcc49-isl
+Requires: compilers-%{package_family}-gmp
+Requires: compilers-%{package_family}-isl
 
 %description
 CLooG is a free software and library to generate code for scanning 

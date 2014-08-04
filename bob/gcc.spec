@@ -1,7 +1,7 @@
 %define debug_package %{nil}
 
 %define package_name 	gcc
-%define package_family	gcc49
+%define package_family	gcc48
 %define package_type 	compilers
 %define software_path	/opt/software
 %define package_path	%{software_path}/%{package_type}/%{package_family}
@@ -18,19 +18,19 @@ Vendor: CentOS
 Packager: Rob Lyon <rob.lyon@wsu.edu>
 Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildRequires: Lmod
-BuildRequires: compilers-gcc49-gmp
-BuildRequires: compilers-gcc49-mpfr
-BuildRequires: compilers-gcc49-mpc
-BuildRequires: compilers-gcc49-isl
-BuildRequires: compilers-gcc49-cloog
-BuildRequires: compilers-gcc49-zlib
+BuildRequires: compilers-%{package_family}-gmp
+BuildRequires: compilers-%{package_family}-mpfr
+BuildRequires: compilers-%{package_family}-mpc
+BuildRequires: compilers-%{package_family}-isl
+BuildRequires: compilers-%{package_family}-cloog
+BuildRequires: compilers-%{package_family}-zlib
 Requires: Lmod
-Requires: compilers-gcc49-gmp
-Requires: compilers-gcc49-mpfr
-Requires: compilers-gcc49-mpc
-Requires: compilers-gcc49-isl
-Requires: compilers-gcc49-cloog
-Requires: compilers-gcc49-zlib
+Requires: compilers-%{package_family}-gmp
+Requires: compilers-%{package_family}-mpfr
+Requires: compilers-%{package_family}-mpc
+Requires: compilers-%{package_family}-isl
+Requires: compilers-%{package_family}-cloog
+Requires: compilers-%{package_family}-zlib
 
 %description
 The gcc package contains the GNU Compiler Collection

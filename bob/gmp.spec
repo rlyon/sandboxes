@@ -1,5 +1,5 @@
 %define package_name 	gmp
-%define package_family	gcc49
+%define package_family	gcc48
 %define package_type 	compilers
 %define software_path	/opt/software
 %define package_path	%{software_path}/%{package_type}/%{package_family}
