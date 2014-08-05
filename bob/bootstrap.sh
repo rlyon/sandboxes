@@ -49,7 +49,7 @@ EOF
 service nginx start
 chkconfig nginx on
 
-cat > /etc/yum.repos.d/wsurel << 'EOF'
+cat > /etc/yum.repos.d/wsurel.repo << 'EOF'
 [wsurel]
 name=IBEST Enterprise Linux - $basearch
 baseurl=http://localhost/wsurel/el$releasever/$basearch

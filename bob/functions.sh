@@ -18,6 +18,7 @@ function gcc_deps_rebuild {
 	mock_rebuild_all /vagrant/isl.spec /usr/local/src/isl-0.12.2.tar.gz
 	mock_rebuild_all /vagrant/cloog.spec /usr/local/src/cloog-0.18.1.tar.gz
 	mock_rebuild_all /vagrant/zlib.spec /usr/local/src/zlib-1.2.8.tar.gz
+	mock_rebuild_all /vagrant/gcc.spec /usr/local/src/gcc-4.8.3.tar.gz
 }
 
 function mock_rebuild_all {
@@ -47,6 +48,7 @@ function mock_rebuild {
 	rpmbuild --nodeps -bs SPECS/$basefile -D 'dist 0'
 
 	/usr/bin/mock -r $repo-$version-$arch --rebuild SRPMS/*.src.rpm
+	rm -rf /var/lib/mock/$repo-$version-$arch/result/*-debuginfo*.rpm
 	mv /var/lib/mock/$repo-$version-$arch/result/*.src.rpm /yumrepo/wsurel/el$version/SRPMS
 	cp /var/lib/mock/$repo-$version-$arch/result/*.rpm /yumrepo/wsurel/el$version/$arch
 	createrepo /yumrepo/wsurel/el$version/$arch
