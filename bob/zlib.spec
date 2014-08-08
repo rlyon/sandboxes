@@ -35,7 +35,7 @@ make
 make DESTDIR=%{buildroot} install
 
 %files
-%defattr(-,root,root)
+%defattr(-,software,software)
 %{package_path}/include/zconf.h
 %{package_path}/include/zlib.h
 %{package_path}/lib/libz.a

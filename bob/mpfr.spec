@@ -44,7 +44,7 @@ rm -rf %{buildroot}/%{package_path}/share/info/dir
 popd
 
 %files
-%defattr(-,root,root)
+%defattr(-,software,software)
 %{package_path}/include/mpf2mpfr.h
 %{package_path}/include/mpfr.h
 %{package_path}/lib/libmpfr.a

@@ -55,7 +55,7 @@ make DESTDIR=%{buildroot} install
 popd
 
 %files
-%defattr(-,root,root)
+%defattr(-,software,software)
 %{package_path}/bin/cloog
 %{package_path}/include/cloog/block.h
 %{package_path}/include/cloog/clast.h

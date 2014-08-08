@@ -45,7 +45,7 @@ make DESTDIR=%{buildroot} install
 popd
 
 %files
-%defattr(-,root,root)
+%defattr(-,software,software)
 %{package_path}/include/isl/aff.h
 %{package_path}/include/isl/aff_type.h
 %{package_path}/include/isl/arg.h

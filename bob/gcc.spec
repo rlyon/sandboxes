@@ -75,7 +75,7 @@ CXXFLAGS="`echo " $CFLAGS " | sed 's/ -Wall / /g;s/ -fexceptions / /g' \
 				--with-mpc=%{package_path} \
 				--with-isl=%{package_path} \
 				--with-cloog=%{package_path} \
-				--build=x86_64-redhat-linux
+				--build=%{_arch}-redhat-linux
 make -j3
 popd
 
@@ -95,7 +95,7 @@ popd
 # Add cpp and cc links
 
 %files
-%defattr(-,root,root)
+%defattr(-,software,software)
 %{package_path}/bin/c++
 %{package_path}/bin/cpp
 %{package_path}/bin/g++

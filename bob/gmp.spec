@@ -47,7 +47,7 @@ rm -rf %{buildroot}/%{package_path}/share/info/dir
 popd
 
 %files
-%defattr(-,root,root)
+%defattr(-,software,software)
 %{package_path}/include/gmp.h
 %{package_path}/lib/libgmp.a
 %{package_path}/lib/libgmp.la

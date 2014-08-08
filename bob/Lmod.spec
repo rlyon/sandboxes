@@ -14,6 +14,7 @@ BuildRequires: lua-devel
 BuildRequires: lua-filesystem
 BuildRequires: lua-posix
 Requires: tcsh
+Requires: tcl
 Requires: lua
 Requires: lua-filesystem
 Requires: lua-posix
@@ -38,6 +39,10 @@ mkdir -p $RPM_BUILD_ROOT/opt/software/moduledata/cache
 make DESTDIR=$RPM_BUILD_ROOT install
 rm $RPM_BUILD_ROOT/usr/lmod/lmod
 
+%pre
+/usr/bin/getent group software || /usr/sbin/groupadd -r myservice
+/usr/bin/getent passwd software || /usr/sbin/useradd -r -d /opt/software -s /sbin/nologin software
+
 %post
 # If /usr/modules doesn't exist or it is a link, change it
 if [ ! -e /usr/modules ] || [ -L /usr/modules ] ; then
@@ -47,11 +52,16 @@ fi
 rm /usr/lmod/lmod
 ln -s /usr/lmod/%{version} /usr/lmod/lmod
 
+%postun
+/usr/sbin/userdel software
+
 %files
 %defattr(-,root,root)
 %config(noreplace) /usr/lmod/5.6.3/init/*
-%dir /opt/software/modulefiles
-%dir /opt/software/moduledata/cache
+%attr(-, software, software) %dir /opt/software
+%attr(-, software, software) %dir /opt/software/modulefiles
+%attr(-, software, software) %dir /opt/software/moduledata
+%attr(-, software, software) %dir /opt/software/moduledata/cache
 /usr/lmod/5.6.3/lib
 /usr/lmod/5.6.3/libexec
 /usr/lmod/5.6.3/modulefiles

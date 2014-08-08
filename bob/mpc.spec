@@ -48,7 +48,7 @@ rm -rf %{buildroot}/%{package_path}/share/info/dir
 popd
 
 %files
-%defattr(-,root,root)
+%defattr(-,software,software)
 %{package_path}/include/mpc.h
 %{package_path}/lib/libmpc.a
 %{package_path}/lib/libmpc.la

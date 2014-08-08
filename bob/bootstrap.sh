@@ -64,25 +64,25 @@ echo "Configuring mock environments.  This will take a while"
 
 echo "Configuring wsurel-5-i386"
 head -n -1 /etc/mock/epel-5-i386.cfg | sed -e '$a\\' > /etc/mock/wsurel-5-i386.cfg
-cat /etc/yum.repos.d/wsurel | sed -e '$a\"""\' >> /etc/mock/wsurel-5-i386.cfg
+cat /etc/yum.repos.d/wsurel.repo | sed -e '$a\"""\' >> /etc/mock/wsurel-5-i386.cfg
 sed -i -e 's/epel-5-i386/wsurel-5-i386/g' /etc/mock/wsurel-5-i386.cfg
 /usr/bin/mock -r wsurel-5-i386 --init
 
 echo "Configuring wsurel-5-x86_64"
 head -n -1 /etc/mock/epel-5-x86_64.cfg | sed -e '$a\\' > /etc/mock/wsurel-5-x86_64.cfg
-cat /etc/yum.repos.d/wsurel | sed -e '$a\"""\' >> /etc/mock/wsurel-5-x86_64.cfg
+cat /etc/yum.repos.d/wsurel.repo | sed -e '$a\"""\' >> /etc/mock/wsurel-5-x86_64.cfg
 sed -i -e 's/epel-5-x86_64/wsurel-5-x86_64/g' /etc/mock/wsurel-5-x86_64.cfg
 /usr/bin/mock -r wsurel-5-x86_64 --init
 
 echo "Configuring wsurel-6-i386"
 head -n -1 /etc/mock/epel-6-i386.cfg | sed -e '$a\\' > /etc/mock/wsurel-6-i386.cfg
-cat /etc/yum.repos.d/wsurel | sed -e '$a\"""\' >> /etc/mock/wsurel-6-i386.cfg
+cat /etc/yum.repos.d/wsurel.repo | sed -e '$a\"""\' >> /etc/mock/wsurel-6-i386.cfg
 sed -i -e 's/epel-6-i386/wsurel-6-i386/g' /etc/mock/wsurel-6-i386.cfg
 /usr/bin/mock -r wsurel-6-i386 --init
 
 echo "Configuring wsurel-6-x86_64"
 head -n -1 /etc/mock/epel-6-x86_64.cfg | sed -e '$a\\' > /etc/mock/wsurel-6-x86_64.cfg
-cat /etc/yum.repos.d/wsurel | sed -e '$a\"""\' >> /etc/mock/wsurel-6-x86_64.cfg
+cat /etc/yum.repos.d/wsurel.repo | sed -e '$a\"""\' >> /etc/mock/wsurel-6-x86_64.cfg
 sed -i -e 's/epel-6-x86_64/wsurel-6-x86_64/g' /etc/mock/wsurel-6-x86_64.cfg
 /usr/bin/mock -r wsurel-6-x86_64 --init
 
