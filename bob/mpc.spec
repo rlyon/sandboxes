@@ -1,12 +1,17 @@
 %define package_name 	mpc
-%define package_family	gcc48
+%define package_version 0.8.1
 %define package_type 	compilers
+
+%define compiler_family		gcc
+%define compiler_version 	4.8.3
+%define compiler_prefix  	%{package_type}-%{compiler_family}-%{compiler_version}
+
 %define software_path	/opt/software
-%define package_path	%{software_path}/%{package_type}/%{package_family}
+%define package_path	%{software_path}/%{package_type}/%{compiler_family}/%{compiler_version}
 
 Summary: A C library for the arithmetic of complex numbers
-Name: %{package_type}-%{package_family}-%{package_name}
-Version: 0.8.1
+Name: %{compiler_prefix}-%{package_name}
+Version: %{package_version}
 Release: 1%{?dist}
 License: LGPLv2+ and GPLv2+ and GFDL
 Group: System Environment/Libraries
@@ -16,11 +21,11 @@ Vendor: CentOS
 Packager: Rob Lyon <rob.lyon@wsu.edu>
 Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildRequires: Lmod
-BuildRequires: compilers-%{package_family}-gmp
-BuildRequires: compilers-%{package_family}-mpfr
+BuildRequires: %{compiler_prefix}-gmp
+BuildRequires: %{compiler_prefix}-mpfr
 Requires: Lmod
-Requires: compilers-%{package_family}-gmp
-Requires: compilers-%{package_family}-mpfr
+Requires: %{compiler_prefix}-gmp
+Requires: %{compiler_prefix}-mpfr
 
 %description
 Gnu Mpc is a C library for the arithmetic of complex numbers with

@@ -45,7 +45,7 @@ function mock_rebuild {
 	cp $sourcefile SOURCES/.
 
 	basefile=`basename $specfile`
-	rpmbuild --nodeps -bs SPECS/$basefile -D 'dist 0'
+	rpmbuild --nodeps -bs SPECS/$basefile -D 'dist %{nil}'
 
 	/usr/bin/mock -r $repo-$version-$arch --rebuild SRPMS/*.src.rpm
 	rm -rf /var/lib/mock/$repo-$version-$arch/result/*-debuginfo*.rpm

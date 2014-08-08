@@ -1,12 +1,17 @@
 %define package_name 	zlib
-%define package_family	gcc48
+%define package_version	1.2.8
 %define package_type 	compilers
+
+%define compiler_family		gcc
+%define compiler_version 	4.8.3
+%define compiler_prefix  	%{package_type}-%{compiler_family}-%{compiler_version}
+
 %define software_path	/opt/software
-%define package_path	%{software_path}/%{package_type}/%{package_family}
+%define package_path	%{software_path}/%{package_type}/%{compiler_family}/%{compiler_version}
 
 Summary: The zlib compression and decompression library
-Name: %{package_type}-%{package_family}-%{package_name}
-Version: 1.2.8
+Name: %{compiler_prefix}-%{package_name}
+Version: %{package_version}
 Release: 1%{?dist}
 License: zlib and Boost
 Group: System Environment/Libraries

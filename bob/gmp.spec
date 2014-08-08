@@ -1,12 +1,17 @@
 %define package_name 	gmp
-%define package_family	gcc48
+%define package_version 4.3.2
 %define package_type 	compilers
+
+%define compiler_family		gcc
+%define compiler_version 	4.8.3
+%define compiler_prefix  	%{package_type}-%{compiler_family}-%{compiler_version}
+
 %define software_path	/opt/software
-%define package_path	%{software_path}/%{package_type}/%{package_family}
+%define package_path	%{software_path}/%{package_type}/%{compiler_family}/%{compiler_version}
 
 Summary: A GNU arbitrary precision library
-Name: %{package_type}-%{package_family}-%{package_name}
-Version: 4.3.2
+Name: %{compiler_prefix}-%{package_name}
+Version: %{package_version}
 Release: 1%{?dist}
 License: LGPLv2+ and  GPLv3+ and LGPLv3+
 Group: System Environment/Libraries
@@ -32,7 +37,7 @@ Install the gmp package if you need a fast arbitrary precision
 library.
 
 %prep
-%setup -q -n %{package_name}-%{version}
+%setup -q -n %{package_name}-%{package_version}
 
 %build
 mkdir build ; pushd build

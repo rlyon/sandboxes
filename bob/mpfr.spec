@@ -1,12 +1,17 @@
 %define package_name 	mpfr
-%define package_family	gcc48
+%define package_version	2.4.2
 %define package_type 	compilers
+
+%define compiler_family		gcc
+%define compiler_version 	4.8.3
+%define compiler_prefix  	%{package_type}-%{compiler_family}-%{compiler_version}
+
 %define software_path	/opt/software
-%define package_path	%{software_path}/%{package_type}/%{package_family}
+%define package_path	%{software_path}/%{package_type}/%{compiler_family}/%{compiler_version}
 
 Summary: A C library for multiple-precision floating-point computations
-Name: %{package_type}-%{package_family}-%{package_name}
-Version: 2.4.2
+Name: %{compiler_prefix}-%{package_name}
+Version: %{package_version}
 Release: 1%{?dist}
 License: LGPLv2+ and GPLv2+ and GFDL
 Group: System Environment/Libraries
@@ -16,9 +21,9 @@ Vendor: CentOS
 Packager: Rob Lyon <rob.lyon@wsu.edu>
 Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildRequires: Lmod
-BuildRequires: compilers-%{package_family}-gmp
+BuildRequires: %{compiler_prefix}-gmp
 Requires: Lmod
-Requires: compilers-%{package_family}-gmp
+Requires: %{compiler_prefix}-gmp
 
 %description
 The MPFR library is a C library for multiple-precision floating-point

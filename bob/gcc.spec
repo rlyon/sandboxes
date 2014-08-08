@@ -1,14 +1,20 @@
 %define debug_package %{nil}
 
-%define package_name 	gcc
-%define package_family	gcc48
+%define package_name    gcc
+%define package_version	4.8.3
 %define package_type 	compilers
+
+%define compiler_family		gcc
+%define compiler_version 	4.8.3
+%define compiler_prefix  	%{package_type}-%{compiler_family}-%{compiler_version}
+
 %define software_path	/opt/software
-%define package_path	%{software_path}/%{package_type}/%{package_family}
+%define package_path	%{software_path}/%{package_type}/%{compiler_family}/%{compiler_version}
+
 
 Summary: Various compilers
-Name: %{package_type}-%{package_family}-%{package_name}
-Version: 4.8.3
+Name: %{package_type}-%{compiler_family}
+Version: %{compiler_version}
 Release: 1%{?dist}
 License: GPLv3+ and GPLv3+ with exceptions and GPLv2+ with exceptions
 Group: Development/Languages
@@ -18,19 +24,19 @@ Vendor: CentOS
 Packager: Rob Lyon <rob.lyon@wsu.edu>
 Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildRequires: Lmod
-BuildRequires: compilers-%{package_family}-gmp
-BuildRequires: compilers-%{package_family}-mpfr
-BuildRequires: compilers-%{package_family}-mpc
-BuildRequires: compilers-%{package_family}-isl
-BuildRequires: compilers-%{package_family}-cloog
-BuildRequires: compilers-%{package_family}-zlib
+BuildRequires: %{compiler_prefix}-gmp
+BuildRequires: %{compiler_prefix}-mpfr
+BuildRequires: %{compiler_prefix}-mpc
+BuildRequires: %{compiler_prefix}-isl
+BuildRequires: %{compiler_prefix}-cloog
+BuildRequires: %{compiler_prefix}-zlib
 Requires: Lmod
-Requires: compilers-%{package_family}-gmp
-Requires: compilers-%{package_family}-mpfr
-Requires: compilers-%{package_family}-mpc
-Requires: compilers-%{package_family}-isl
-Requires: compilers-%{package_family}-cloog
-Requires: compilers-%{package_family}-zlib
+Requires: %{compiler_prefix}-gmp
+Requires: %{compiler_prefix}-mpfr
+Requires: %{compiler_prefix}-mpc
+Requires: %{compiler_prefix}-isl
+Requires: %{compiler_prefix}-cloog
+Requires: %{compiler_prefix}-zlib
 
 %description
 The gcc package contains the GNU Compiler Collection
@@ -105,14 +111,14 @@ popd
 %{package_path}/bin/gcc-ranlib
 %{package_path}/bin/gcov
 %{package_path}/bin/gfortran
-%{package_path}/bin/x86_64-redhat-linux-c++
-%{package_path}/bin/x86_64-redhat-linux-g++
-%{package_path}/bin/x86_64-redhat-linux-gcc
-%{package_path}/bin/x86_64-redhat-linux-gcc-4.8.3
-%{package_path}/bin/x86_64-redhat-linux-gcc-ar
-%{package_path}/bin/x86_64-redhat-linux-gcc-nm
-%{package_path}/bin/x86_64-redhat-linux-gcc-ranlib
-%{package_path}/bin/x86_64-redhat-linux-gfortran
+%{package_path}/bin/%{_arch}-redhat-linux-c++
+%{package_path}/bin/%{_arch}-redhat-linux-g++
+%{package_path}/bin/%{_arch}-redhat-linux-gcc
+%{package_path}/bin/%{_arch}-redhat-linux-gcc-4.8.3
+%{package_path}/bin/%{_arch}-redhat-linux-gcc-ar
+%{package_path}/bin/%{_arch}-redhat-linux-gcc-nm
+%{package_path}/bin/%{_arch}-redhat-linux-gcc-ranlib
+%{package_path}/bin/%{_arch}-redhat-linux-gfortran
 %{package_path}/include/c++
 %{package_path}/lib/gcc
 %{package_path}/lib64/libasan.a
