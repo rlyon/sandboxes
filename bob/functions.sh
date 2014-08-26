@@ -9,8 +9,8 @@ function run_as {
 }
 
 function gcc_deps_rebuild {
-	version_file=$1
-	source $version_file
+	# version_file=$1
+	# source $version_file
 	# Build GMP
 	mock_rebuild_all /vagrant/gmp.spec /usr/local/src/gmp-4.3.2.tar.gz
 	mock_rebuild_all /vagrant/mpfr.spec /usr/local/src/mpfr-2.4.2.tar.gz
