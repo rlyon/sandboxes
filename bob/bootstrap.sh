@@ -88,11 +88,9 @@ sed -i -e 's/epel-6-x86_64/wsurel-6-x86_64/g' /etc/mock/wsurel-6-x86_64.cfg
 
 sudo -u vagrant -i bash <<'EOL'
 source /vagrant/functions.sh
-mock_rebuild wsurel 5 i386 /vagrant/Lmod.spec /vagrant/Lmod-5.6.3.tar.bz2
-mock_rebuild wsurel 5 x86_64 /vagrant/Lmod.spec /vagrant/Lmod-5.6.3.tar.bz2
-mock_rebuild wsurel 6 i386 /vagrant/Lmod.spec /vagrant/Lmod-5.6.3.tar.bz2
-mock_rebuild wsurel 6 x86_64 /vagrant/Lmod.spec /vagrant/Lmod-5.6.3.tar.bz2
+mock_build_all /vagrant environment-modules 
 EOL
+
 
 pushd /usr/local/src
 if [[ ! -e gcc-4.8.3.tar.gz ]] ; then

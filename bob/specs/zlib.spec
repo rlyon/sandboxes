@@ -20,9 +20,9 @@ URL: http://www.gzip.org/zlib/
 Vendor: CentOS
 Packager: Rob Lyon <rob.lyon@wsu.edu>
 Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-root
-BuildRequires: Lmod
+BuildRequires: environment-modules
 BuildRequires: m4
-Requires: Lmod
+Requires: environment-modules
 
 %description
 Zlib is a general-purpose, patent-free, lossless data compression

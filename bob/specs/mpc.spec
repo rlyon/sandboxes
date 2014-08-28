@@ -20,10 +20,10 @@ URL: http://www.multiprecision.org/
 Vendor: CentOS
 Packager: Rob Lyon <rob.lyon@wsu.edu>
 Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-root
-BuildRequires: Lmod
+BuildRequires: environment-modules
 BuildRequires: %{compiler_prefix}-gmp
 BuildRequires: %{compiler_prefix}-mpfr
-Requires: Lmod
+Requires: environment-modules
 Requires: %{compiler_prefix}-gmp
 Requires: %{compiler_prefix}-mpfr
 

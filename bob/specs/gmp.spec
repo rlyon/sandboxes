@@ -20,9 +20,9 @@ URL: http://gmplib.org/
 Vendor: CentOS
 Packager: Rob Lyon <rob.lyon@wsu.edu>
 Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-root
-BuildRequires: Lmod
+BuildRequires: environment-modules
 BuildRequires: m4
-Requires: Lmod
+Requires: environment-modules
 
 %description
 The gmp package contains GNU MP, a library for arbitrary precision

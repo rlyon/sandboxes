@@ -13,7 +13,7 @@
 
 
 Summary: Various compilers
-Name: %{package_type}-%{compiler_family}
+Name: %{compiler_prefix}-core
 Version: %{compiler_version}
 Release: 1%{?dist}
 License: GPLv3+ and GPLv3+ with exceptions and GPLv2+ with exceptions
@@ -23,14 +23,14 @@ URL: http://gcc.gnu.org
 Vendor: CentOS
 Packager: Rob Lyon <rob.lyon@wsu.edu>
 Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-root
-BuildRequires: Lmod
+BuildRequires: environment-modules
 BuildRequires: %{compiler_prefix}-gmp
 BuildRequires: %{compiler_prefix}-mpfr
 BuildRequires: %{compiler_prefix}-mpc
 BuildRequires: %{compiler_prefix}-isl
 BuildRequires: %{compiler_prefix}-cloog
 BuildRequires: %{compiler_prefix}-zlib
-Requires: Lmod
+Requires: environment-modules
 Requires: %{compiler_prefix}-gmp
 Requires: %{compiler_prefix}-mpfr
 Requires: %{compiler_prefix}-mpc
@@ -181,11 +181,14 @@ popd
 %{package_path}/%{_lib}/libstdc++.so.6.0.19-gdb.pyo
 %{package_path}/%{_lib}/libsupc++.a
 %{package_path}/%{_lib}/libsupc++.la
+# libtsan isn't installed on i386 due to invalid linker internals
+%ifarch x86_64
 %{package_path}/%{_lib}/libtsan.a
 %{package_path}/%{_lib}/libtsan.la
 %{package_path}/%{_lib}/libtsan.so
 %{package_path}/%{_lib}/libtsan.so.0
 %{package_path}/%{_lib}/libtsan.so.0.0.0
+%endif
 %{package_path}/libexec/gcc
 %{package_path}/share/gcc-4.8.3
 %{package_path}/share/info/libgomp.info
