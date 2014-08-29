@@ -1,0 +1,22 @@
+--- lapack-3.5.0/BLAS/SRC/Makefile.BAD	2014-08-29 00:13:20.848106489 +0000
++++ lapack-3.5.0/BLAS/SRC/Makefile	2014-08-29 00:30:53.292108048 +0000
+@@ -141,6 +141,13 @@
+ 	$(ARCH) $(ARCHFLAGS) $@ $(ALLOBJ)
+ 	$(RANLIB) $@
+ 
++static: $(ALLOBJ)
++	$(ARCH) $(ARCHFLAGS) libblas.a $(ALLOBJ)
++	$(RANLIB) libblas.a
++
++shared: $(ALLOBJ)
++	cc $(CFLAGS) -shared -Wl,-soname,libblas.so.3 -o libblas.so.3.2.1 $(ALLOBJ) -lm -lgfortran -lc
++
+ single: $(SBLAS1) $(ALLBLAS) $(SBLAS2) $(SBLAS3)
+ 	$(ARCH) $(ARCHFLAGS) $(BLASLIB) $(SBLAS1) $(ALLBLAS) \
+ 	$(SBLAS2) $(SBLAS3)
+@@ -168,4 +175,4 @@
+ 	rm -f *.o
+ 
+ .f.o: 
+-	$(FORTRAN) $(OPTS) -c $< -o $@
++	$(FORTRAN) $(FFLAGS) $(OPTS) -c $< -o $@

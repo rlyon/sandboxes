@@ -1,0 +1,23 @@
+--- lapack-3.5.0/INSTALL/make.inc.gfortran.BAD	2014-08-29 01:28:15.461034240 +0000
++++ lapack-3.5.0/INSTALL/make.inc.gfortran	2014-08-29 01:26:50.671040680 +0000
+@@ -13,9 +13,9 @@
+ #  desired load options for your machine.
+ #
+ FORTRAN  = gfortran 
+-OPTS     = -O2 -frecursive
++# OPTS     = -O2 -frecursive
+ DRVOPTS  = $(OPTS)
+-NOOPT    = -O0 -frecursive
++NOOPT    = 
+ LOADER   = gfortran
+ LOADOPTS =
+ #
+@@ -43,7 +43,7 @@
+ # CC is the C compiler, normally invoked with options CFLAGS.
+ #
+ CC = gcc
+-CFLAGS = -O3
++# CFLAGS = -O3
+ #
+ # LAPACKE has also the interface to some routines from tmglib,
+ # if LAPACKE_WITH_TMG is selected, we need to add those routines to LAPACKE

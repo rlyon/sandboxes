@@ -92,26 +92,26 @@ mock_build_all /vagrant environment-modules
 EOL
 
 
-pushd /usr/local/src
-if [[ ! -e gcc-4.8.3.tar.gz ]] ; then
-    wget -q http://www.netgull.com/gcc/releases/gcc-4.8.3/gcc-4.8.3.tar.gz
-fi
-if [[ ! -e gmp-4.3.2.tar.gz ]] ; then
-    wget -q ftp://ftp.gnu.org/gnu/gmp/gmp-4.3.2.tar.gz
-fi
-if [[ ! -e mpfr-2.4.2.tar.gz ]] ; then
-    wget -q http://www.mpfr.org/mpfr-2.4.2/mpfr-2.4.2.tar.gz
-fi
-if [[ ! -e  mpc-0.8.1.tar.gz ]] ; then
-    wget -q http://www.multiprecision.org/mpc/download/mpc-0.8.1.tar.gz
-fi
-if [[ ! -e isl-0.12.2.tar.gz ]] ; then
-    wget -q http://isl.gforge.inria.fr/isl-0.12.2.tar.gz
-fi
-if [[ ! -e cloog-0.18.1.tar.gz ]] ; then
-    wget -q http://www.bastoul.net/cloog/pages/download/count.php3?url=./cloog-0.18.1.tar.gz
-fi
-if [[ ! -e  zlib-1.2.8.tar.gz ]]; then
-    wget -q http://zlib.net/zlib-1.2.8.tar.gz
-fi
-popd
+# pushd /usr/local/src
+# if [[ ! -e gcc-4.8.3.tar.gz ]] ; then
+#     wget -q http://www.netgull.com/gcc/releases/gcc-4.8.3/gcc-4.8.3.tar.gz
+# fi
+# if [[ ! -e gmp-4.3.2.tar.gz ]] ; then
+#     wget -q ftp://ftp.gnu.org/gnu/gmp/gmp-4.3.2.tar.gz
+# fi
+# if [[ ! -e mpfr-2.4.2.tar.gz ]] ; then
+#     wget -q http://www.mpfr.org/mpfr-2.4.2/mpfr-2.4.2.tar.gz
+# fi
+# if [[ ! -e  mpc-0.8.1.tar.gz ]] ; then
+#     wget -q http://www.multiprecision.org/mpc/download/mpc-0.8.1.tar.gz
+# fi
+# if [[ ! -e isl-0.12.2.tar.gz ]] ; then
+#     wget -q http://isl.gforge.inria.fr/isl-0.12.2.tar.gz
+# fi
+# if [[ ! -e cloog-0.18.1.tar.gz ]] ; then
+#     wget -q http://www.bastoul.net/cloog/pages/download/count.php3?url=./cloog-0.18.1.tar.gz
+# fi
+# if [[ ! -e  zlib-1.2.8.tar.gz ]]; then
+#     wget -q http://zlib.net/zlib-1.2.8.tar.gz
+# fi
+# popd

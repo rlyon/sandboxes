@@ -1,0 +1,36 @@
+--- lapack-3.5.0/SRC/Makefile.BAD	2014-08-29 00:31:39.144110396 +0000
++++ lapack-3.5.0/SRC/Makefile	2014-08-29 00:43:57.661109844 +0000
+@@ -427,6 +427,13 @@
+ 	$(ARCH) $(ARCHFLAGS) $@ $(ALLOBJ) $(ALLXOBJ)
+ 	$(RANLIB) $@
+ 
++static: $(ALLOBJ) $(ALLXOBJ)
++	$(ARCH) $(ARCHFLAGS) liblapack.a $(ALLOBJ) $(ALLXOBJ)
++	$(RANLIB) liblapack.a
++
++shared: $(ALLOBJ) $(ALLXOBJ)
++	cc $(CFLAGS) -shared -Wl,-soname,liblapack.so.3 -o liblapack.so.3.5.0 $(ALLOBJ) $(ALLXOBJ) -L.. -lblas -lm -lgfortran -lc
++
+ single: $(SLASRC) $(DSLASRC) $(SXLASRC) $(SCLAUX) $(ALLAUX)
+ 	$(ARCH) $(ARCHFLAGS) ../$(LAPACKLIB) $(SLASRC) $(DSLASRC) \
+ 	$(SXLASRC) $(SCLAUX) $(ALLAUX) $(ALLXAUX)
+@@ -470,12 +477,12 @@
+ 	rm -f *.o
+ 
+ .f.o: 
+-	$(FORTRAN) $(OPTS) -c $< -o $@
++	$(FORTRAN) $(FFLAGS) $(OPTS) -c $< -o $@
+ 
+-slaruv.o: slaruv.f ; $(FORTRAN) $(NOOPT) -c $< -o $@
+-dlaruv.o: dlaruv.f ; $(FORTRAN) $(NOOPT) -c $< -o $@
+-sla_wwaddw.o: sla_wwaddw.f ; $(FORTRAN) $(NOOPT) -c $< -o $@
+-dla_wwaddw.o: dla_wwaddw.f ; $(FORTRAN) $(NOOPT) -c $< -o $@
+-cla_wwaddw.o: cla_wwaddw.f ; $(FORTRAN) $(NOOPT) -c $< -o $@
+-zla_wwaddw.o: zla_wwaddw.f ; $(FORTRAN) $(NOOPT) -c $< -o $@
++slaruv.o: slaruv.f ; $(FORTRAN) $(FFLAGS) $(NOOPT) -c $< -o $@
++dlaruv.o: dlaruv.f ; $(FORTRAN) $(FFLAGS) $(NOOPT) -c $< -o $@
++sla_wwaddw.o: sla_wwaddw.f ; $(FORTRAN) $(FFLAGS) $(NOOPT) -c $< -o $@
++dla_wwaddw.o: dla_wwaddw.f ; $(FORTRAN) $(FFLAGS) $(NOOPT) -c $< -o $@
++cla_wwaddw.o: cla_wwaddw.f ; $(FORTRAN) $(FFLAGS) $(NOOPT) -c $< -o $@
++zla_wwaddw.o: zla_wwaddw.f ; $(FORTRAN) $(FFLAGS) $(NOOPT) -c $< -o $@
+ 

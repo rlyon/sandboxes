@@ -1,0 +1,32 @@
+# Required definitions
+%{!?_name: 			%{error: Name is not defined}}
+%{!?_version: 		%{error: Version is not defined}}
+%{!?_group: 		%{error: Group is not defined}}
+%{!?_summary: 		%{error: Summary is not defined}}
+%{!?_description: 	%{error: Description is not defined}}
+%{!?_url: 			%{error: URL is not defined}}
+%{!?_license: 		%{error: License is not defined}}
+
+%{!?_family: 		%define compiler_family gcc-48}
+%{!?_release: 		%define package_release 1}
+%{!?_subrelease: 	%define package_subrelease 1}
+%{!?_packager: 		%define packager BOB Buildsystem}
+%{!?_email: 		%define packager_email nosignsoflifehere@gmail.com}
+
+%if "%{package_group}" == "compiler"
+	%define package_fullname %{package_group}-%{compiler_prefix}-%{package_name}
+	%define package_version  %{package_version}
+	%define package_release  %{package_release}%{?dist}
+%else
+	%define package_fullname %{package_group}-%{compiler_prefix}-%{package_name}-%{package_version}
+	%define package_version  %{package_release}
+	%define package_release  %{package_subrelease}%{?dist}
+%endif
+
+# For oldtime sake.
+%define compiler_prefix %{compiler_family}
+
+%define software_path 	/opt/software
+%define compiler_path	%{software_path}/compilers/%{compiler_family}/%{compiler_version}
+%define package_path	%{software_path}/%{package_group}/%{package_name}/%{package_version}
+%define module_path		%{software_path}/modulefiles

@@ -1,0 +1,10 @@
+Summary: 	%{package_summary}
+Name: 		%{package_fullname}
+Version: 	%{package_version}
+Release: 	%{package_release}
+License: 	%{package_license}
+Group: 	 	%{package_group}
+URL: 		%{package_url}
+Vendor: 	%{package_vendor}
+Packager: 	%{packager}<%{packager_email}>
+Buildroot: 	%{_tmppath}/%{name}-%{release}-root
