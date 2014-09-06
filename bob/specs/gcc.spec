@@ -81,6 +81,7 @@ CXXFLAGS="`echo " $CFLAGS " | sed 's/ -Wall / /g;s/ -fexceptions / /g' \
 				--with-mpc=%{package_path} \
 				--with-isl=%{package_path} \
 				--with-cloog=%{package_path} \
+				
 				--libdir=%{package_path}/lib \
 				--build=%{_arch}-redhat-linux
 make -j3

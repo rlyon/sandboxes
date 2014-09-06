@@ -1,0 +1,228 @@
+Summary: Various compilers
+Name: gcc
+Version: 4.8.3
+Release: 1%{?dist}
+License: GPLv3+ and GPLv3+ with exceptions and GPLv2+ with exceptions
+Group: Development/Languages
+Source: %{name}-%{version}.tar.gz
+Source99: defines.inc
+URL: http://gmplib.org/
+Vendor: CentOS
+Packager: Rob Lyon <rob.lyon@wsu.edu>
+Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-root
+
+%include %{_sourcedir}/defines.inc
+
+%package -n %{compiler_family}-core
+Summary: Various compilers
+Version: 4.8.3
+Release: 1%{?dist}
+Group: System Environment/Libraries
+BuildRequires: environment-modules
+BuildRequires: %{compiler_family}-gmp
+BuildRequires: %{compiler_family}-mpfr
+BuildRequires: %{compiler_family}-mpc
+BuildRequires: %{compiler_family}-isl
+BuildRequires: %{compiler_family}-cloog
+BuildRequires: %{compiler_family}-zlib
+Requires: environment-modules
+Requires: %{compiler_family}-gmp
+Requires: %{compiler_family}-mpfr
+Requires: %{compiler_family}-mpc
+Requires: %{compiler_family}-isl
+Requires: %{compiler_family}-cloog
+Requires: %{compiler_family}-zlib
+
+%description
+%description -n %{compiler_family}-core
+The gcc package contains the GNU Compiler Collection
+
+%prep
+%setup -q -n %{name}-%{version}
+
+%build
+mkdir build ; pushd build
+export LD_LIBRARY_PATH=%{_libdir}
+CC="$CC" \
+CFLAGS="$OPT_FLAGS -L%{_libdir} -I%{_includedir}" \
+CXXFLAGS="`echo " $CFLAGS " | sed 's/ -Wall / /g;s/ -fexceptions / /g' \
+    | sed 's/ -Werror=format-security / -Wformat -Werror=format-security /'`" \
+../configure 	--host=%{_host} --build=%{_build} \
+    			--prefix=%{_prefix} \
+    			--exec-prefix=%{_exec_prefix} \
+    			--bindir=%{_bindir} \
+    			--sbindir=%{_sbindir} \
+    			--sysconfdir=%{_sysconfdir} \
+    			--datadir=%{_datadir} \
+    			--includedir=%{_includedir} \
+    			--libdir=%{_libdir} \
+    			--libexecdir=%{_libexecdir} \
+    			--localstatedir=%{_localstatedir} \
+    			--sharedstatedir=%{_sharedstatedir} \
+    			--mandir=%{_mandir} \
+    			--infodir=%{_infodir} \
+                --disable-multilib \
+                --enable-shared \
+                --enable-__cxa_atexit \
+                --enable-checking=release \
+                --enable-lto \
+                --enable-threads=posix \
+                --enable-languages=c,c++,objc,obj-c++,fortran \
+                --disable-libunwind-exceptions \
+                --disable-libstdcxx-pch \
+                --disable-werror \
+                --disable-libgcj \
+                --disable-libmudflap \
+                --disable-nls \
+                --with-fpmath=sse \
+                --with-system-zlib \
+                --with-cpu=generic \
+                --with-gmp=%{_prefix} \
+                --with-mpfr=%{_prefix} \
+                --with-mpc=%{_prefix} \
+                --with-isl=%{_prefix} \
+                --with-cloog=%{_prefix} 
+make %{_smp_mflags}
+popd
+
+%install
+%ifarch x86_64
+mkdir -p %{buildroot}/%{_prefix}/lib
+pushd %{buildroot}/%{_prefix}
+ln -s lib lib64
+popd
+%endif
+pushd build
+make DESTDIR=%{buildroot} install
+rm -rf %{buildroot}/%{_infodir}/dir
+popd
+
+mkdir -p %{buildroot}%{_modulefiledir}/%{compiler_name}
+cat > %{buildroot}%{_modulefiledir}/%{compiler_name}/%{compiler_version} << 'EOF'
+#%Module######################################################################
+proc ModulesHelp { } {
+puts stderr "This modulefile defines the paths needed to use: "
+puts stderr "%{name} version %{version}"
+puts stderr ""
+}
+
+prepend-path PATH               %{_bindir}
+prepend-path LD_LIBRARY_PATH    %{_libdir}
+prepend-path INFOPATH           %{_infodir}
+prepend-path MANPATH            %{_mandir}
+
+setenv COMPILER_PREFIX     %{_prefix}
+setenv COMPILER_CFLAGS     "-I %{_includedir} -L %{_libdir}"
+setenv COMPILER_CXXFLAGS   "-I %{_includedir} -L %{_libdir}"
+setenv COMPILER_LDFLAGS    "-Wl,-rpath=%{_libdir} -L %{_libdir}"
+setenv COMPILER_INCLUDE    "-I %{_includedir}"
+setenv COMPILER_OPTIMIZE   "-O2 -ffast-math -fomit-frame-pointer -funroll-loops -mtune=generic"
+EOF
+
+%files -n %{compiler_family}-core
+%defattr(-,software,software)
+%{_modulefiledir}/%{compiler_name}/%{compiler_version}
+%{_bindir}/c++
+%{_bindir}/cpp
+%{_bindir}/g++
+%{_bindir}/gcc
+%{_bindir}/gcc-ar
+%{_bindir}/gcc-nm
+%{_bindir}/gcc-ranlib
+%{_bindir}/gcov
+%{_bindir}/gfortran
+%{_bindir}/%{_build}-c++
+%{_bindir}/%{_build}-g++
+%{_bindir}/%{_build}-gcc
+%{_bindir}/%{_build}-gcc-4.8.3
+%{_bindir}/%{_build}-gcc-ar
+%{_bindir}/%{_build}-gcc-nm
+%{_bindir}/%{_build}-gcc-ranlib
+%{_bindir}/%{_build}-gfortran
+%{_includedir}/c++
+%ifarch x86_64
+%{_libdir}64
+%endif
+%{_libdir}/gcc
+%{_libdir}/libasan.a
+%{_libdir}/libasan.la
+%{_libdir}/libasan.so
+%{_libdir}/libasan.so.0
+%{_libdir}/libasan.so.0.0.0
+%{_libdir}/libasan_preinit.o
+%{_libdir}/libatomic.a
+%{_libdir}/libatomic.la
+%{_libdir}/libatomic.so
+%{_libdir}/libatomic.so.1
+%{_libdir}/libatomic.so.1.0.0
+%{_libdir}/libgcc_s.so
+%{_libdir}/libgcc_s.so.1
+%{_libdir}/libgfortran.a
+%{_libdir}/libgfortran.la
+%{_libdir}/libgfortran.so
+%{_libdir}/libgfortran.so.3
+%{_libdir}/libgfortran.so.3.0.0
+%{_libdir}/libgfortran.spec
+%{_libdir}/libgomp.a
+%{_libdir}/libgomp.la
+%{_libdir}/libgomp.so
+%{_libdir}/libgomp.so.1
+%{_libdir}/libgomp.so.1.0.0
+%{_libdir}/libgomp.spec
+%{_libdir}/libiberty.a
+%{_libdir}/libitm.a
+%{_libdir}/libitm.la
+%{_libdir}/libitm.so
+%{_libdir}/libitm.so.1
+%{_libdir}/libitm.so.1.0.0
+%{_libdir}/libitm.spec
+%{_libdir}/libobjc.a
+%{_libdir}/libobjc.la
+%{_libdir}/libobjc.so
+%{_libdir}/libobjc.so.4
+%{_libdir}/libobjc.so.4.0.0
+%{_libdir}/libquadmath.a
+%{_libdir}/libquadmath.la
+%{_libdir}/libquadmath.so
+%{_libdir}/libquadmath.so.0
+%{_libdir}/libquadmath.so.0.0.0
+%{_libdir}/libssp.a
+%{_libdir}/libssp.la
+%{_libdir}/libssp.so
+%{_libdir}/libssp.so.0
+%{_libdir}/libssp.so.0.0.0
+%{_libdir}/libssp_nonshared.a
+%{_libdir}/libssp_nonshared.la
+%{_libdir}/libstdc++.a
+%{_libdir}/libstdc++.la
+%{_libdir}/libstdc++.so
+%{_libdir}/libstdc++.so.6
+%{_libdir}/libstdc++.so.6.0.19
+%{_libdir}/libstdc++.so.6.0.19-gdb.py
+%{_libdir}/libstdc++.so.6.0.19-gdb.pyc
+%{_libdir}/libstdc++.so.6.0.19-gdb.pyo
+%{_libdir}/libsupc++.a
+%{_libdir}/libsupc++.la
+
+# libtsan isn't installed on i386 due to invalid linker internals
+%ifarch x86_64
+%{_libdir}/libtsan.a
+%{_libdir}/libtsan.la
+%{_libdir}/libtsan.so
+%{_libdir}/libtsan.so.0
+%{_libdir}/libtsan.so.0.0.0
+%endif
+
+%{_libexecdir}/gcc
+%{_datadir}/gcc-4.8.3
+%{_infodir}/libgomp.info
+%{_infodir}/libitm.info
+%{_infodir}/libquadmath.info
+%{_mandir}/man1/cpp.1
+%{_mandir}/man1/g++.1
+%{_mandir}/man1/gcc.1
+%{_mandir}/man1/gcov.1
+%{_mandir}/man1/gfortran.1
+%{_mandir}/man7/fsf-funding.7
+%{_mandir}/man7/gfdl.7
+%{_mandir}/man7/gpl.7

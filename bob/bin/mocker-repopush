@@ -1,0 +1,48 @@
+#!/usr/bin/python
+import os
+import shutil
+import subprocess
+from optparse import OptionParser
+
+
+
+def run(repo, options):
+    repobase = os.path.abspath(os.path.expanduser(options.path))
+
+    for f in os.listdir(os.getcwd()):
+        if f.endswith('.rpm'):
+            print ""
+            parts = f.split('.')
+            arch = parts[-2]
+            version = parts[-3]
+
+            if arch == "i686":
+                arch = "i386"
+
+            print "Pushing: %s to %s-%s-%s" % (f, repo, version, arch)
+            dest = os.path.join(repobase, repo, version, arch)
+            print "Moving: %s -> %s" % (f, dest)
+            filename = os.path.join(dest,f)
+            if os.path.isfile(filename):
+                os.remove(filename)
+            shutil.move(f, dest)
+            print "Regenerate: %s-%s-%s" % (repo, version, arch)
+            os.system("/usr/bin/createrepo %s" % (dest))
+
+def main():
+    parser = OptionParser(usage="mocker [options] name/version",
+                          version="mocker 0.1")
+    parser.add_option("-p", "--path",
+                      dest="path",
+                      default="/yumrepo",
+                      help="Path to the local repo")
+
+    (options, args) = parser.parse_args()
+
+    if len(args) != 1:
+        parser.error("Wrong number of arguments.")
+
+    run(args[0], options)
+
+if __name__ == '__main__':
+    main()

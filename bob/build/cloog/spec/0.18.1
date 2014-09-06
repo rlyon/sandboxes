@@ -1,0 +1,114 @@
+Summary: A C library for generate code for scanning Z-polyhedra
+Name: cloog
+Version: 0.18.1
+Release: 1%{?dist}
+License: GNU
+Group: System Environment/Libraries
+Source: %{name}-%{version}.tar.gz
+Source99: defines.inc
+URL: http://www.cloog.org/
+Vendor: CentOS
+Packager: Rob Lyon <rob.lyon@wsu.edu>
+Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-root
+
+%include %{_sourcedir}/defines.inc
+
+%package -n %{package_name}
+Summary: A C library for generate code for scanning Z-polyhedra
+Version: 0.18.1
+Release: 1%{?dist}
+Group: System Environment/Libraries
+BuildRequires: environment-modules
+BuildRequires: %{compiler_family}-gmp
+BuildRequires: %{compiler_family}-isl
+Requires: environment-modules
+Requires: %{compiler_family}-gmp
+Requires: %{compiler_family}-isl
+
+%description
+%description -n %{package_name}
+CLooG is a free software and library to generate code for scanning 
+Z-polyhedra. That is, it finds a code (e.g. in C, FORTRAN...) that 
+reaches each integral point of one or more parameterized polyhedra. 
+CLooG has been originally written to solve the code generation 
+problem for optimizing compilers based on the polytope model. 
+Nevertheless it is used now in various area e.g. to build control 
+automata for high-level synthesis or to find the best polynomial 
+approximation of a function. CLooG may help in any situation where 
+scanning polyhedra matters. While the user has full control on 
+generated code quality, CLooG is designed to avoid control overhead 
+and to produce a very effective code. 
+
+%prep
+%setup -q -n %{name}-%{version}
+
+%build
+mkdir build ; pushd build
+
+CFLAGS="${CFLAGS:-%optflags}" 		; export CFLAGS
+CXXFLAGS="${CXXFLAGS:-%optflags}" 	; export CXXFLAGS
+FFLAGS="${FFLAGS:-%optflags}" 		; export FFLAGS
+
+../configure 	--host=%{_host} --build=%{_build} \
+    			--prefix=%{_prefix} \
+    			--exec-prefix=%{_exec_prefix} \
+    			--bindir=%{_bindir} \
+    			--sbindir=%{_sbindir} \
+    			--sysconfdir=%{_sysconfdir} \
+    			--datadir=%{_datadir} \
+    			--includedir=%{_includedir} \
+    			--libdir=%{_libdir} \
+    			--libexecdir=%{_libexecdir} \
+    			--localstatedir=%{_localstatedir} \
+    			--sharedstatedir=%{_sharedstatedir} \
+    			--mandir=%{_mandir} \
+    			--infodir=%{_infodir} \
+                --prefix=%{_prefix} \
+                --with-isl=system \
+                --with-isl-prefix=%{_prefix} \
+                --with-gmp=system \
+                --with-gmp-prefix=%{_prefix}
+
+make %{_smp_mflags}
+popd
+
+%install
+pushd build
+make DESTDIR=%{buildroot} install
+rm -rf %{buildroot}/%{_infodir}/dir
+popd
+
+%files -n %{package_name}
+%defattr(-,software,software)
+%{_bindir}/cloog
+%{_includedir}/cloog/block.h
+%{_includedir}/cloog/clast.h
+%{_includedir}/cloog/cloog.h
+%{_includedir}/cloog/constraints.h
+%{_includedir}/cloog/domain.h
+%{_includedir}/cloog/input.h
+%{_includedir}/cloog/int.h
+%{_includedir}/cloog/isl/backend.h
+%{_includedir}/cloog/isl/cloog.h
+%{_includedir}/cloog/isl/constraintset.h
+%{_includedir}/cloog/isl/domain.h
+%{_includedir}/cloog/loop.h
+%{_includedir}/cloog/matrix.h
+%{_includedir}/cloog/matrix/constraintset.h
+%{_includedir}/cloog/names.h
+%{_includedir}/cloog/options.h
+%{_includedir}/cloog/pprint.h
+%{_includedir}/cloog/program.h
+%{_includedir}/cloog/state.h
+%{_includedir}/cloog/statement.h
+%{_includedir}/cloog/stride.h
+%{_includedir}/cloog/union_domain.h
+%{_includedir}/cloog/version.h
+%{_libdir}/cloog-isl/cloog-isl-config.cmake
+%{_libdir}/isl/isl-config.cmake
+%{_libdir}/libcloog-isl.a
+%{_libdir}/libcloog-isl.la
+%{_libdir}/libcloog-isl.so
+%{_libdir}/libcloog-isl.so.4
+%{_libdir}/libcloog-isl.so.4.0.0
+%{_libdir}/pkgconfig/cloog-isl.pc

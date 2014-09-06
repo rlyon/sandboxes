@@ -1,0 +1,171 @@
+Summary: Ncurses support utilities
+Name: ncurses
+Version: 5.9
+Release: 1%{?dist}
+License: MIT
+Group: System Environment/Libraries
+Source: %{name}.tar.gz
+Source99: defines.inc
+URL: http://invisible-island.net/ncurses/ncurses.html
+Vendor: CentOS
+Packager: Rob Lyon <rob.lyon@wsu.edu>
+Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-root
+
+%include %{_sourcedir}/defines.inc
+
+%package -n %{package_name}
+Summary: Ncurses support utilities
+Version: 5.9
+Release: 1%{?dist}
+Group: System Environment/Libraries
+BuildRequires: environment-modules
+BuildRequires: %{compiler_family}-core
+Requires: environment-modules
+Requires: %{compiler_family}-core
+
+%description
+%description -n %{package_name}
+The curses library routines are a terminal-independent method of
+updating character screens with reasonable optimization.  The ncurses
+(new curses) library is a freely distributable replacement for the
+discontinued 4.4 BSD classic curses library.
+
+This package contains support utilities, including a terminfo compiler
+tic, a decompiler infocmp, clear, tput, tset, and a termcap conversion
+tool captoinfo.
+
+%prep
+%setup -q -n %{name}-%{version}
+
+%build
+mkdir build ; pushd build
+
+CFLAGS="${CFLAGS:-%optflags}"
+CFLAGS="${CFLAGS} -I%{_includedir} -L%{_libdir}"     ; export CFLAGS
+CXXFLAGS="${CXXFLAGS:-%optflags}"
+CXXFLAGS="${CXXFLAGS} -I%{_includedir} -L%{_libdir}" ; export CXXFLAGS
+FFLAGS="${FFLAGS:-%optflags}"
+FFLAGS="${FFLAGS} -I%{_includedir} -L%{_libdir}"     ; export FFLAGS
+LDFLAGS="${LDFLAGS} -L%{_libdir}"                    ; export LDFLAGS
+
+../configure 	--host=%{_host} --build=%{_build} \
+    			--prefix=%{_prefix} \
+    			--exec-prefix=%{_exec_prefix} \
+    			--bindir=%{_bindir} \
+    			--sbindir=%{_sbindir} \
+    			--sysconfdir=%{_sysconfdir} \
+    			--datadir=%{_datadir} \
+    			--includedir=%{_includedir} \
+    			--libdir=%{_libdir} \
+    			--libexecdir=%{_libexecdir} \
+    			--localstatedir=%{_localstatedir} \
+    			--sharedstatedir=%{_sharedstatedir} \
+    			--mandir=%{_mandir} \
+    			--infodir=%{_infodir} \
+                --with-shared \
+                --with-default-terminfo-dir=%{_datadir}/terminfo \
+                --with-termpath=%{_datadir}/terminfo \
+                --enable-pc-files \
+                --enable-overwrite \
+                --enable-hard-tabs \
+                --enable-xmc-glitch \
+                --enable-colorfgbg \
+                --without-ada --with-ospeed=unsigned \
+                --with-termlib=tinfo \
+                --with-chtype=long \
+                --with-ticlib \
+                --enable-pc \
+                --with-pkg-config=%{_libdir}
+
+make %{_smp_mflags}
+popd
+
+%install
+pushd build
+make DESTDIR=%{buildroot} install
+rm -rf %{buildroot}/%{_infodir}/dir
+popd
+
+# Get the files
+find %{buildroot}%{_mandir}/man1 -type f -printf "%{_mandir}/man1/%f\n" > manfiles
+find %{buildroot}%{_mandir}/man3 -type f -printf "%{_mandir}/man3/%f\n" >> manfiles
+find %{buildroot}%{_mandir}/man5 -type f -printf "%{_mandir}/man5/%f\n" >> manfiles
+find %{buildroot}%{_mandir}/man7 -type f -printf "%{_mandir}/man7/%f\n" >> manfiles
+# Get the links
+find %{buildroot}%{_mandir}/man1 -type l -printf "%{_mandir}/man1/%f\n" >> manfiles
+find %{buildroot}%{_mandir}/man3 -type l -printf "%{_mandir}/man3/%f\n" >> manfiles
+find %{buildroot}%{_mandir}/man5 -type l -printf "%{_mandir}/man5/%f\n" >> manfiles
+find %{buildroot}%{_mandir}/man7 -type l -printf "%{_mandir}/man7/%f\n" >> manfiles
+
+%files -n %{package_name} -f manfiles
+%defattr(-,software,software)
+%{_bindir}/captoinfo
+%{_bindir}/clear
+%{_bindir}/infocmp
+%{_bindir}/infotocap
+%{_bindir}/ncurses5-config
+%{_bindir}/reset
+%{_bindir}/tabs
+%{_bindir}/tic
+%{_bindir}/toe
+%{_bindir}/tput
+%{_bindir}/tset
+%{_includedir}/curses.h
+%{_includedir}/cursesapp.h
+%{_includedir}/cursesf.h
+%{_includedir}/cursesm.h
+%{_includedir}/cursesp.h
+%{_includedir}/cursesw.h
+%{_includedir}/cursslk.h
+%{_includedir}/eti.h
+%{_includedir}/etip.h
+%{_includedir}/form.h
+%{_includedir}/menu.h
+%{_includedir}/nc_tparm.h
+%{_includedir}/ncurses.h
+%{_includedir}/ncurses_dll.h
+%{_includedir}/panel.h
+%{_includedir}/term.h
+%{_includedir}/term_entry.h
+%{_includedir}/termcap.h
+%{_includedir}/tic.h
+%{_includedir}/unctrl.h
+%{_libdir}/libcurses.a
+%{_libdir}/libcurses.so
+%{_libdir}/libtic.a
+%{_libdir}/libtic.so
+%{_libdir}/libtic.so.5
+%{_libdir}/libtic.so.5.9
+%{_libdir}/libtic_g.a
+%{_libdir}/libtinfo.a
+%{_libdir}/libtinfo.so
+%{_libdir}/libtinfo.so.5
+%{_libdir}/libtinfo.so.5.9
+%{_libdir}/libtinfo_g.a
+%{_libdir}/libform.a
+%{_libdir}/libform_g.a
+%{_libdir}/libmenu.a
+%{_libdir}/libmenu_g.a
+%{_libdir}/libncurses++.a
+%{_libdir}/libncurses.a
+%{_libdir}/libncurses_g.a
+%{_libdir}/libpanel.a
+%{_libdir}/libpanel_g.a
+%{_libdir}/libform.so
+%{_libdir}/libform.so.5
+%{_libdir}/libform.so.5.9
+%{_libdir}/libmenu.so
+%{_libdir}/libmenu.so.5
+%{_libdir}/libmenu.so.5.9
+%{_libdir}/libncurses.so
+%{_libdir}/libncurses.so.5
+%{_libdir}/libncurses.so.5.9
+%{_libdir}/libpanel.so
+%{_libdir}/libpanel.so.5
+%{_libdir}/libpanel.so.5.9
+%dir %{_datadir}/tabset
+%dir %{_datadir}/terminfo
+%{_datadir}/tabset/*
+%{_datadir}/terminfo/*
+# Pick up that pesky symlink
+%{_libdir}/terminfo

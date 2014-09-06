@@ -1,0 +1,165 @@
+#!/usr/bin/python
+import os
+import sys
+import shutil
+import subprocess
+from optparse import OptionParser
+
+def build_prep(source_path):
+    bin_path = os.path.dirname(os.path.realpath(__file__))
+
+    current_path = os.getcwd()
+    os.chdir(source_path)
+    command = [
+        "bash", 
+        os.path.join(source_path, 
+        "prepare.sh"),
+        bin_path
+    ]
+    returncode = os.system(' '.join(command))
+    os.chdir(current_path)
+    return returncode
+
+def build_package(source_path, name, version, options):
+    rpmmacros = os.path.join(os.path.expanduser('~'), '.rpmmacros')
+    specfile = os.path.join(options.buildpath, name, 'spec', version)
+    defines = map(lambda x: "--define='%s'" % x, options.defines)
+
+    print "Adjusting: rpmmacros (%s)" % (rpmmacros)
+    with open(rpmmacros, 'w') as f:
+        f.write('%_topdir %(pwd)\n')
+
+    current_path = os.getcwd()
+    
+    os.chdir('/tmp')
+    shutil.rmtree('package', True)
+
+    os.mkdir('package')
+    os.mkdir('package/SPECS')
+    os.mkdir('package/SOURCES')
+    os.chdir('package')
+
+    print "Moving: include files from %s" % (options.include)
+    for f in os.listdir(options.include):
+        if f.endswith('.inc'):
+            source = os.path.join(options.include, f)
+            destination = os.path.join('SOURCES', f)
+            shutil.copyfile(source, destination)
+
+    print "Moving: source files from %s" % (source_path)
+    for f in os.listdir(source_path):
+        source = os.path.join(source_path, f)
+        destination = os.path.join('SOURCES', f)
+        shutil.copyfile(source, destination)
+
+    print "Moving spec file into place."
+    shutil.copyfile(specfile, os.path.join('SPECS', name + '.spec'))
+
+    command = [
+        "rpmbuild",
+        "-bs",
+        "--nodeps",
+        "-D 'dist %{nil}'",
+        ' '.join(defines),
+        "SPECS/%s.spec" % (name)
+    ]
+
+    returncode = os.system(' '.join(command))
+    if not returncode == 0:
+        return 1
+
+    command = [
+        "/usr/bin/mock",
+        "-r %s" % (options.repo),
+        " ".join(defines),
+        "--rebuild",
+        "SRPMS/*.src.rpm"
+    ]
+
+    # command = [ "/usr/bin/mock" ]
+    # command.append("-r %s" % options.repo)
+    # command = command + defines
+    # command.append('--rebuild')
+    # command.append('SRPMS/*.src.rpm')
+    
+    print ' '.join(command)
+    returncode = os.system(' '.join(command))
+    if not returncode == 0:
+        return 1
+
+    os.chdir(current_path)
+    return 0
+
+def clean_and_move(name, version, options):
+    current_path = os.getcwd()
+
+    os.chdir('/tmp')
+    shutil.rmtree('package', True)
+
+    # Moving rpms to the current directory
+    results = os.path.join('/var/lib/mock', options.repo, 'result')
+    for f in os.listdir(results):
+        if f.endswith('.src.rpm'):
+            srpm = os.path.join(results, f)
+            print "Remove: %s" % (f)
+            os.remove(srpm)
+
+    # Moving rpms to the current directory
+    for f in os.listdir(results):
+        if f.endswith('.rpm'):
+            try:
+                source = os.path.join(results, f)
+                print "Move: %s" % (f)
+                shutil.move(source, current_path)
+            except shutil.Error as err:
+                print "Skipping: %s" % (f)
+                pass
+
+    os.chdir(current_path)
+    return 0
+
+def run(name, version, options):
+    source_path = os.path.join(options.buildpath, name, 'source', version)
+    if build_prep(source_path):
+        sys.exit(1)
+    if build_package(source_path, name, version, options):
+        sys.exit(1)
+    clean_and_move(name, version, options)
+
+def main():
+    parser = OptionParser(usage="mocker [options] name/version",
+                          version="mocker 0.1")
+    parser.add_option("-r", "--repo",
+                      dest="repo",
+                      default="wsurel-6-x86_64",
+                      help="Mock repo that the package will be built in.")
+    parser.add_option("-D", "--define",
+                      dest="defines",
+                      action="append",
+                      default=[],
+                      help="Definition that will be passed to rpmbuild. Can be used multiple times.")
+    parser.add_option("-B", "--buildpath",
+                      dest="buildpath",
+                      default="/vagrant/build",
+                      help="The path to the build configurations.")
+    parser.add_option("-I", "--include",
+                      dest="include",
+                      default="/vagrant/include",
+                      help="The path to the included RPM macros.")
+    (options, args) = parser.parse_args()
+
+    if len(args) != 1:
+        parser.error("Wrong number of arguments.")
+
+    name, version = args[0].split('/')
+
+    print "Building: %s version %s" % (name, version)
+    print "   - REPO:      %s" % options.repo
+    print "   - DEFINES:   %s" % ', '.join(options.defines)
+    print "   - BUILDPATH: %s" % options.buildpath
+    print "   - INCLUDE:   %s" % options.include
+
+    run(name, version, options)
+
+if __name__ == '__main__':
+    main()

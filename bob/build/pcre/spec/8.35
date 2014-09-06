@@ -1,0 +1,103 @@
+Summary: Perl-compatible regular expression library
+Name: pcre
+Version: 8.35
+Release: 1%{?dist}
+License: BSD
+Group: System Environment/Libraries
+Source: %{name}-%{version}.tar.gz
+Source99: defines.inc
+URL: http://www.pcre.org/
+Vendor: CentOS
+Packager: Rob Lyon <rob.lyon@wsu.edu>
+Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-root
+
+%include %{_sourcedir}/defines.inc
+
+%package -n %{package_name}
+Summary: Perl-compatible regular expression library
+Version: 8.35
+Release: 1%{?dist}
+Group: System Environment/Libraries
+BuildRequires: environment-modules
+BuildRequires: %{compiler_family}-core
+Requires: environment-modules
+Requires: %{compiler_family}-core
+
+%description
+%description -n %{package_name}
+Perl-compatible regular expression library.
+PCRE has its own native API, but a set of "wrapper" functions that are based on
+the POSIX API are also supplied in the library libpcreposix. Note that this
+just provides a POSIX calling interface to PCRE: the regular expressions
+themselves still follow Perl syntax and semantics. The header file
+for the POSIX-style functions is called pcreposix.h.
+
+%prep
+%setup -q -n %{name}-%{version}
+
+%build
+mkdir build ; pushd build
+
+CFLAGS="${CFLAGS:-%optflags}"
+CFLAGS="${CFLAGS} -I%{_includedir} -L%{_libdir}"     ; export CFLAGS
+CXXFLAGS="${CXXFLAGS:-%optflags}"
+CXXFLAGS="${CXXFLAGS} -I%{_includedir} -L%{_libdir}" ; export CXXFLAGS
+FFLAGS="${FFLAGS:-%optflags}"
+FFLAGS="${FFLAGS} -I%{_includedir} -L%{_libdir}"     ; export FFLAGS
+LDFLAGS="${LDFLAGS} -L%{_libdir}"                    ; export LDFLAGS
+
+../configure 	--host=%{_host} --build=%{_build} \
+    			--prefix=%{_prefix} \
+    			--exec-prefix=%{_exec_prefix} \
+    			--bindir=%{_bindir} \
+    			--sbindir=%{_sbindir} \
+    			--sysconfdir=%{_sysconfdir} \
+    			--datadir=%{_datadir} \
+    			--includedir=%{_includedir} \
+    			--libdir=%{_libdir} \
+    			--libexecdir=%{_libexecdir} \
+    			--localstatedir=%{_localstatedir} \
+    			--sharedstatedir=%{_sharedstatedir} \
+    			--mandir=%{_mandir} \
+    			--infodir=%{_infodir}
+make %{_smp_mflags}
+popd
+
+%install
+pushd build
+make DESTDIR=%{buildroot} install
+rm -rf %{buildroot}/%{_infodir}/dir
+rm -rf %{buildroot}/%{_datadir}/doc
+popd
+
+%files -n %{package_name}
+%defattr(-,software,software)
+%{_bindir}/pcre-config
+%{_bindir}/pcregrep
+%{_bindir}/pcretest
+%{_includedir}/pcre.h
+%{_includedir}/pcre_scanner.h
+%{_includedir}/pcre_stringpiece.h
+%{_includedir}/pcrecpp.h
+%{_includedir}/pcrecpparg.h
+%{_includedir}/pcreposix.h
+%{_libdir}/libpcre.a
+%{_libdir}/libpcre.la
+%{_libdir}/libpcre.so
+%{_libdir}/libpcre.so.1
+%{_libdir}/libpcre.so.1.2.3
+%{_libdir}/libpcrecpp.a
+%{_libdir}/libpcrecpp.la
+%{_libdir}/libpcrecpp.so
+%{_libdir}/libpcrecpp.so.0
+%{_libdir}/libpcrecpp.so.0.0.0
+%{_libdir}/libpcreposix.a
+%{_libdir}/libpcreposix.la
+%{_libdir}/libpcreposix.so
+%{_libdir}/libpcreposix.so.0
+%{_libdir}/libpcreposix.so.0.0.2
+%{_libdir}/pkgconfig/libpcre.pc
+%{_libdir}/pkgconfig/libpcrecpp.pc
+%{_libdir}/pkgconfig/libpcreposix.pc
+%{_mandir}/man1/pcre*
+%{_mandir}/man3/pcre*

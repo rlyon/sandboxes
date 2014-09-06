@@ -8,13 +8,28 @@ function mock_init {
 	/usr/bin/mock -r $1 --init
 }
 
-function mocker_all {
-	for version in 5 6 ; do
-		for arch in i386 x86_64 ; do
-			echo "Building for wsurel-$version-$arch"
-			mocker -R wsurel-$version-$arch $@
-		done
-	done
+function dir_init {
+	name=$1
+	version=$2
+	file=$3
+	src=$4
+
+	pushd /vagrant/build
+	mkdir -p $name/{spec,source}
+	mkdir $name/source/$version
+	pushd $name/source/$version
+	cat > prepare.sh <<EOF
+#!/bin/sh
+source \$1/functions.sh
+
+FILE="$file"
+SRC="$src"
+download_unless_present \$FILE \$SRC
+EOF
+	popd
+
+	touch $name/spec/$version
+	popd
 }
 
 # function run_as {
@@ -81,14 +96,14 @@ function mocker_all {
 # 	done
 # }
 
-function mock_scrub_all {
-	for version in 5 6 ; do
-		for arch in i386 x86_64 ; do
-			echo "Scrubbing wsurel-$version-$arch"
-			/usr/bin/mock -r $repo-$version-$arch --scrub=all
-		done
-	done
-}
+# function mock_scrub_all {
+# 	for version in 5 6 ; do
+# 		for arch in i386 x86_64 ; do
+# 			echo "Scrubbing wsurel-$version-$arch"
+# 			/usr/bin/mock -r $repo-$version-$arch --scrub=all
+# 		done
+# 	done
+# }
 
 # function mock_build {
 # 	dir=$1
@@ -176,6 +191,12 @@ function mock_scrub_all {
 # 	mv /var/lib/mock/$repo-$version-$arch/results/*.src.rpm /yumrepo/wsurel/el$version/SRPMS
 # 	cp /var/lib/mock/$repo-$version-$arch/results/*.rpm /yumrepo/wsurel/el$version/$arch
 # 	createrepo /yumrepo/wsurel/el$version/$arch
+# }
+
+# function create_repo {
+# 	repo=$1
+# 	version=$2
+# 	arch=$3
 # }
 
 function clean_repos {

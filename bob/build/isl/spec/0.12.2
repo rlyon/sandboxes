@@ -1,0 +1,127 @@
+Summary: A thread-safe C library for manipulating integer points
+Name: isl
+Version: 0.12.2
+Release: 1%{?dist}
+License: MIT
+Group: System Environment/Libraries
+Source: %{name}-%{version}.tar.gz
+Source99: defines.inc
+URL: ftp://gcc.gnu.org/pub/gcc/infrastructure
+Vendor: CentOS
+Packager: Rob Lyon <rob.lyon@wsu.edu>
+Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-root
+
+%include %{_sourcedir}/defines.inc
+
+%package -n %{package_name}
+Summary: A thread-safe C library for manipulating integer points
+Version: 0.12.2
+Release: 1%{?dist}
+Group: System Environment/Libraries
+BuildRequires: environment-modules
+BuildRequires: %{compiler_family}-gmp
+Requires: environment-modules
+Requires: %{compiler_family}-gmp
+
+%description
+%description -n %{package_name}
+Isl is a thread-safe C library for manipulating sets and relations
+of integer points bounded by affine constraints.  The descriptions of
+the sets and relations may involve both parameters and existentially
+quantified variables.  All computations are performed in exact integer
+arithmetic using GMP.
+
+%prep
+%setup -q -n %{name}-%{version}
+
+%build
+mkdir build ; pushd build
+
+CFLAGS="${CFLAGS:-%optflags}" 		; export CFLAGS
+CXXFLAGS="${CXXFLAGS:-%optflags}" 	; export CXXFLAGS
+FFLAGS="${FFLAGS:-%optflags}" 		; export FFLAGS
+
+../configure 	--host=%{_host} --build=%{_build} \
+    			--prefix=%{_prefix} \
+    			--exec-prefix=%{_exec_prefix} \
+    			--bindir=%{_bindir} \
+    			--sbindir=%{_sbindir} \
+    			--sysconfdir=%{_sysconfdir} \
+    			--datadir=%{_datadir} \
+    			--includedir=%{_includedir} \
+    			--libdir=%{_libdir} \
+    			--libexecdir=%{_libexecdir} \
+    			--localstatedir=%{_localstatedir} \
+    			--sharedstatedir=%{_sharedstatedir} \
+    			--mandir=%{_mandir} \
+    			--infodir=%{_infodir} \
+                --with-gmp=system \
+                --with-gmp-prefix=%{_prefix}
+
+make %{_smp_mflags}
+popd
+
+%install
+pushd build
+make DESTDIR=%{buildroot} install
+rm -rf %{buildroot}/%{_infodir}/dir
+popd
+
+%files -n %{package_name}
+%defattr(-,software,software)
+%dir %{_includedir}/isl
+%{_includedir}/isl/aff.h
+%{_includedir}/isl/aff_type.h
+%{_includedir}/isl/arg.h
+%{_includedir}/isl/ast.h
+%{_includedir}/isl/ast_build.h
+%{_includedir}/isl/band.h
+%{_includedir}/isl/blk.h
+%{_includedir}/isl/config.h
+%{_includedir}/isl/constraint.h
+%{_includedir}/isl/ctx.h
+%{_includedir}/isl/dim.h
+%{_includedir}/isl/flow.h
+%{_includedir}/isl/hash.h
+%{_includedir}/isl/id.h
+%{_includedir}/isl/ilp.h
+%{_includedir}/isl/int.h
+%{_includedir}/isl/list.h
+%{_includedir}/isl/local_space.h
+%{_includedir}/isl/lp.h
+%{_includedir}/isl/map.h
+%{_includedir}/isl/map_type.h
+%{_includedir}/isl/mat.h
+%{_includedir}/isl/multi.h
+%{_includedir}/isl/obj.h
+%{_includedir}/isl/options.h
+%{_includedir}/isl/point.h
+%{_includedir}/isl/polynomial.h
+%{_includedir}/isl/polynomial_type.h
+%{_includedir}/isl/printer.h
+%{_includedir}/isl/schedule.h
+%{_includedir}/isl/seq.h
+%{_includedir}/isl/set.h
+%{_includedir}/isl/set_type.h
+%{_includedir}/isl/space.h
+%{_includedir}/isl/stdint.h
+%{_includedir}/isl/stream.h
+%{_includedir}/isl/union_map.h
+%{_includedir}/isl/union_map_type.h
+%{_includedir}/isl/union_set.h
+%{_includedir}/isl/union_set_type.h
+%{_includedir}/isl/val.h
+%{_includedir}/isl/val_gmp.h
+%{_includedir}/isl/val_int.h
+%{_includedir}/isl/vec.h
+%{_includedir}/isl/version.h
+%{_includedir}/isl/vertices.h
+%{_libdir}/libisl.a
+%{_libdir}/libisl.la
+%{_libdir}/libisl.so
+%{_libdir}/libisl.so.10
+%{_libdir}/libisl.so.10.2.2
+%{_libdir}/libisl.so.10.2.2-gdb.py
+%{_libdir}/libisl.so.10.2.2-gdb.pyc
+%{_libdir}/libisl.so.10.2.2-gdb.pyo
+%{_libdir}/pkgconfig/isl.pc

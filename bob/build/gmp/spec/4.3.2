@@ -1,0 +1,81 @@
+Summary: A GNU arbitrary precision library
+Name: gmp
+Version: 4.3.2
+Release: 1%{?dist}
+License: LGPLv2+ and  GPLv3+ and LGPLv3+
+Group: System Environment/Libraries
+Source: %{name}-%{version}.tar.gz
+Source99: defines.inc
+URL: http://gmplib.org/
+Vendor: CentOS
+Packager: Rob Lyon <rob.lyon@wsu.edu>
+Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-root
+
+%include %{_sourcedir}/defines.inc
+
+%package -n %{package_name}
+Summary: A GNU arbitrary precision library
+Version: 4.3.2
+Release: 1%{?dist}
+Group: System Environment/Libraries
+BuildRequires: environment-modules
+BuildRequires: m4
+Requires: environment-modules
+
+%description
+%description -n %{package_name}
+The gmp package contains GNU MP, a library for arbitrary precision
+arithmetic, signed integers operations, rational numbers and floating
+point numbers. GNU MP is designed for speed, for both small and very
+large operands. GNU MP is fast because it uses fullwords as the basic
+arithmetic type, it uses fast algorithms, it carefully optimizes
+assembly code for many CPUs most common inner loops, and it generally
+emphasizes speed over simplicity/elegance in its operations.
+
+Install the gmp package if you need a fast arbitrary precision
+library.
+
+%prep
+%setup -q -n %{name}-%{version}
+
+%build
+mkdir build ; pushd build
+
+CFLAGS="${CFLAGS:-%optflags}" 		; export CFLAGS
+CXXFLAGS="${CXXFLAGS:-%optflags}" 	; export CXXFLAGS
+FFLAGS="${FFLAGS:-%optflags}" 		; export FFLAGS
+
+../configure 	--host=%{_host} --build=%{_build} \
+    			--prefix=%{_prefix} \
+    			--exec-prefix=%{_exec_prefix} \
+    			--bindir=%{_bindir} \
+    			--sbindir=%{_sbindir} \
+    			--sysconfdir=%{_sysconfdir} \
+    			--datadir=%{_datadir} \
+    			--includedir=%{_includedir} \
+    			--libdir=%{_libdir} \
+    			--libexecdir=%{_libexecdir} \
+    			--localstatedir=%{_localstatedir} \
+    			--sharedstatedir=%{_sharedstatedir} \
+    			--mandir=%{_mandir} \
+    			--infodir=%{_infodir}
+make %{_smp_mflags}
+popd
+
+%install
+pushd build
+make DESTDIR=%{buildroot} install
+rm -rf %{buildroot}/%{_infodir}/dir
+popd
+
+%files -n %{package_name}
+%defattr(-,software,software)
+%{_includedir}/gmp.h
+%{_libdir}/libgmp.a
+%{_libdir}/libgmp.la
+%{_libdir}/libgmp.so
+%{_libdir}/libgmp.so.3
+%{_libdir}/libgmp.so.3.5.2
+%{_infodir}/gmp.info
+%{_infodir}/gmp.info-1
+%{_infodir}/gmp.info-2

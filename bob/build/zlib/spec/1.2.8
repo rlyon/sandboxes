@@ -1,0 +1,59 @@
+Summary: The zlib compression and decompression library
+Name: zlib
+Version: 1.2.8
+Release: 1%{?dist}
+License: zlib and Boost
+Group: System Environment/Libraries
+Source: %{name}-%{version}.tar.gz
+Source99: defines.inc
+URL: http://www.gzip.org/zlib/
+Vendor: CentOS
+Packager: Rob Lyon <rob.lyon@wsu.edu>
+Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-root
+
+%include %{_sourcedir}/defines.inc
+
+%package -n %{package_name}
+Summary: The zlib compression and decompression library
+Version: 1.2.8
+Release: 1%{?dist}
+Group: System Environment/Libraries
+BuildRequires: environment-modules
+BuildRequires: m4
+Requires: environment-modules
+
+%description
+%description -n %{package_name}
+Zlib is a general-purpose, patent-free, lossless data compression
+library which is used by many different programs.
+
+%prep
+%setup -q -n %{name}-%{version}
+
+%build
+CFLAGS="${CFLAGS:-%optflags}" 		; export CFLAGS
+CXXFLAGS="${CXXFLAGS:-%optflags}" 	; export CXXFLAGS
+FFLAGS="${FFLAGS:-%optflags}" 		; export FFLAGS
+LDFLAGS="$LDFLAGS -Wl,-z,relro"     ; export LDFLAGS
+./configure --prefix=%{_prefix} \
+			--eprefix=%{_prefix} \
+			--libdir=%{_libdir} \
+			--sharedlibdir=%{_libdir} \
+			--includedir=%{_includedir}
+make
+
+%install
+make DESTDIR=%{buildroot} install
+mv %{buildroot}%{_datadir}/man %{buildroot}/%{_mandir}
+rm -rf %{buildroot}/%{_datadir}
+
+%files -n %{package_name}
+%defattr(-,software,software)
+%{_includedir}/zconf.h
+%{_includedir}/zlib.h
+%{_libdir}/libz.a
+%{_libdir}/libz.so
+%{_libdir}/libz.so.1
+%{_libdir}/libz.so.1.2.8
+%{_libdir}/pkgconfig/zlib.pc
+%{_mandir}/man3/zlib.3

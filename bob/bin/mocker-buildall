@@ -1,0 +1,60 @@
+#!/usr/bin/python
+import os
+import subprocess
+from optparse import OptionParser
+
+def mocker(repo, name, version, options):
+    defines = map(lambda x: "--define='%s'" % x, options.defines)
+
+    command = [ "mocker" ]
+    command.append("--repo=%s" % repo)
+    command.append("--buildpath=%s" % (options.buildpath))
+    command.append("--include=%s" % (options.include))
+    command = command + defines
+    command.append("%s/%s" % (name,version))
+
+    print ' '.join(command)
+    
+    returncode = os.system(' '.join(command))
+    if not returncode == 0:
+        return 1
+
+def run(name, version, options):
+    # Read repos from file
+    repolist = os.path.abspath(os.path.expanduser(options.repolist))
+    with open(repolist, 'r') as f:
+        repos = f.readlines()
+
+    for repo in repos:
+        mocker(repo.strip(), name, version, options)
+
+def main():
+    parser = OptionParser(usage="mocker [options] name/version",
+                          version="mocker 0.1")
+    parser.add_option("-r", "--repolist",
+                      dest="repolist",
+                      default="~/.mocker/repolist",
+                      help="A file containing the mock repos that will be used for the builds")
+    parser.add_option("-D", "--define",
+                      dest="defines",
+                      action="append",
+                      default=[],
+                      help="Definition that will be passed to rpmbuild. Can be used multiple times.")
+    parser.add_option("-B", "--buildpath",
+                      dest="buildpath",
+                      default="/vagrant/build",
+                      help="The path to the build configurations.")
+    parser.add_option("-I", "--include",
+                      dest="include",
+                      default="/vagrant/include",
+                      help="The path to the included RPM macros.")
+    (options, args) = parser.parse_args()
+
+    if len(args) != 1:
+        parser.error("Wrong number of arguments.")
+
+    name, version = args[0].split('/')
+    run(name, version, options)
+
+if __name__ == '__main__':
+    main()

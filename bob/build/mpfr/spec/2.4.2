@@ -1,0 +1,81 @@
+Summary: A C library for multiple-precision floating-point computations
+Name: mpfr
+Version: 2.4.2
+Release: 1%{?dist}
+License: LGPLv2+ and  GPLv3+ and LGPLv3+
+Group: System Environment/Libraries
+Source: %{name}-%{version}.tar.gz
+Source99: defines.inc
+URL: http://www.mpfr.org/
+Vendor: CentOS
+Packager: Rob Lyon <rob.lyon@wsu.edu>
+Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-root
+
+%include %{_sourcedir}/defines.inc
+
+%package -n %{package_name}
+Summary: A C library for multiple-precision floating-point computations.
+Release: 1%{?dist}
+Group: System Environment/Libraries
+BuildRequires: environment-modules
+BuildRequires: %{compiler_family}-gmp
+Requires: environment-modules
+Requires: %{compiler_family}-gmp
+
+%description
+%description -n %{package_name}
+The MPFR library is a C library for multiple-precision floating-point
+computations with "correct rounding". The MPFR is efficient and
+also has a well-defined semantics. It copies the good ideas from the
+ANSI/IEEE-754 standard for double-precision floating-point arithmetic
+(53-bit mantissa). MPFR is based on the GMP multiple-precision library.
+
+%prep
+%setup -q -n %{name}-%{version}
+
+%build
+mkdir build ; pushd build
+
+CFLAGS="${CFLAGS:-%optflags}"
+CFLAGS="${CFLAGS} -I%{_includedir} -L%{_libdir}"     ; export CFLAGS
+CXXFLAGS="${CXXFLAGS:-%optflags}"
+CXXFLAGS="${CXXFLAGS} -I%{_includedir} -L%{_libdir}" ; export CXXFLAGS
+FFLAGS="${FFLAGS:-%optflags}"
+FFLAGS="${FFLAGS} -I%{_includedir} -L%{_libdir}"     ; export FFLAGS
+LDFLAGS="${LDFLAGS} -L%{_libdir}"                    ; export LDFLAGS
+
+../configure 	--host=%{_host} --build=%{_build} \
+    			--prefix=%{_prefix} \
+    			--exec-prefix=%{_exec_prefix} \
+    			--bindir=%{_bindir} \
+    			--sbindir=%{_sbindir} \
+    			--sysconfdir=%{_sysconfdir} \
+    			--datadir=%{_datadir} \
+    			--includedir=%{_includedir} \
+    			--libdir=%{_libdir} \
+    			--libexecdir=%{_libexecdir} \
+    			--localstatedir=%{_localstatedir} \
+    			--sharedstatedir=%{_sharedstatedir} \
+    			--mandir=%{_mandir} \
+    			--infodir=%{_infodir} \
+                --with-gmp=%{_prefix}
+make %{_smp_mflags}
+popd
+
+%install
+pushd build
+make DESTDIR=%{buildroot} install
+rm -rf %{buildroot}%{_infodir}/dir
+rm -rf %{buildroot}%{_datadir}/doc
+popd
+
+%files -n %{package_name}
+%defattr(-,software,software)
+%{_includedir}/mpf2mpfr.h
+%{_includedir}/mpfr.h
+%{_libdir}/libmpfr.a
+%{_libdir}/libmpfr.la
+%{_libdir}/libmpfr.so
+%{_libdir}/libmpfr.so.1
+%{_libdir}/libmpfr.so.1.2.2
+%{_infodir}/mpfr.info
