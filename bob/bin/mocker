@@ -44,13 +44,19 @@ def build_package(source_path, name, version, options):
         if f.endswith('.inc'):
             source = os.path.join(options.include, f)
             destination = os.path.join('SOURCES', f)
+            print "Copying: %s -> %s" % (source, destination)
             shutil.copyfile(source, destination)
+
+    print os.listdir(os.path.join('SOURCES'))
 
     print "Moving: source files from %s" % (source_path)
     for f in os.listdir(source_path):
         source = os.path.join(source_path, f)
         destination = os.path.join('SOURCES', f)
+        print "Copying: %s -> %s" % (source, destination)
         shutil.copyfile(source, destination)
+
+    print os.listdir(os.path.join('SOURCES'))
 
     print "Moving spec file into place."
     shutil.copyfile(specfile, os.path.join('SPECS', name + '.spec'))
