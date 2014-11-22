@@ -21,11 +21,44 @@ def run(repo, options):
 
             print "Pushing: %s to %s-%s-%s" % (f, repo, version, arch)
             dest = os.path.join(repobase, repo, version, arch)
+            
+            try:
+                os.makedirs(dest)
+            except os.error:
+                pass
+
             print "Moving: %s -> %s" % (f, dest)
             filename = os.path.join(dest,f)
             if os.path.isfile(filename):
                 os.remove(filename)
             shutil.move(f, dest)
+            # print "Regenerate: %s-%s-%s" % (repo, version, arch)
+            # os.system("/usr/bin/createrepo %s" % (dest))
+
+def link_noarch(sourcepath, destpath):
+    if not os.path.isdir(sourcepath):
+        return
+
+    for f in os.listdir(sourcepath):
+        if f.endswith('.rpm'):
+            source = os.path.join(sourcepath, f)
+            dest = os.path.join(destpath, f)
+            print "Linking: %s -> %s" % (source,dest)
+            os.symlink(source,dest)
+
+
+def createrepo(repo, options):
+    repobase = os.path.abspath(os.path.expanduser(options.path))
+    arches = ['i386', 'x86_64']
+    versions = ['el5', 'el6']
+
+    for version in versions:
+        for arch in arches:
+            noarch = os.path.join(repobase, repo, version, 'noarch')
+            dest = os.path.join(repobase, repo, version, arch)
+
+            link_noarch(noarch, dest)
+
             print "Regenerate: %s-%s-%s" % (repo, version, arch)
             os.system("/usr/bin/createrepo %s" % (dest))
 
@@ -43,6 +76,7 @@ def main():
         parser.error("Wrong number of arguments.")
 
     run(args[0], options)
+    createrepo(args[0], options)
 
 if __name__ == '__main__':
     main()
