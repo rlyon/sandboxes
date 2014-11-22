@@ -37,15 +37,17 @@ for the POSIX-style functions is called pcreposix.h.
 
 %build
 mkdir build ; pushd build
-
-CFLAGS="${CFLAGS:-%optflags}"
-CFLAGS="${CFLAGS} -I%{_includedir} -L%{_libdir}"     ; export CFLAGS
-CXXFLAGS="${CXXFLAGS:-%optflags}"
-CXXFLAGS="${CXXFLAGS} -I%{_includedir} -L%{_libdir}" ; export CXXFLAGS
+export PATH=%{_bindir}:%{_sbindir}:$PATH
+which ld
+export LD_LIBRARY_PATH=%{_libdir}:$LD_LIBRARY_PATH
 FFLAGS="${FFLAGS:-%optflags}"
 FFLAGS="${FFLAGS} -I%{_includedir} -L%{_libdir}"     ; export FFLAGS
 LDFLAGS="${LDFLAGS} -L%{_libdir}"                    ; export LDFLAGS
 
+CC="$CC" \
+CFLAGS="$OPT_FLAGS -L%{_libdir} -I%{_includedir}" \
+CXXFLAGS="`echo " $CFLAGS " | sed 's/ -Wall / /g;s/ -fexceptions / /g' \
+    | sed 's/ -Werror=format-security / -Wformat -Werror=format-security /'`" \
 ../configure 	--host=%{_host} --build=%{_build} \
     			--prefix=%{_prefix} \
     			--exec-prefix=%{_exec_prefix} \
@@ -64,6 +66,8 @@ make %{_smp_mflags}
 popd
 
 %install
+export PATH=%{_bindir}:%{_sbindir}:$PATH
+export LD_LIBRARY_PATH=%{_libdir}:$LD_LIBRARY_PATH
 pushd build
 make DESTDIR=%{buildroot} install
 rm -rf %{buildroot}/%{_infodir}/dir

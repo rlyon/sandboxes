@@ -39,7 +39,8 @@ tool captoinfo.
 
 %build
 mkdir build ; pushd build
-
+export PATH=%{_bindir}:%{_sbindir}:$PATH
+export LD_LIBRARY_PATH=%{_libdir}:$LD_LIBRARY_PATH
 CFLAGS="${CFLAGS:-%optflags}"
 CFLAGS="${CFLAGS} -I%{_includedir} -L%{_libdir}"     ; export CFLAGS
 CXXFLAGS="${CXXFLAGS:-%optflags}"
@@ -81,6 +82,8 @@ make %{_smp_mflags}
 popd
 
 %install
+export PATH=%{_bindir}:%{_sbindir}:$PATH
+export LD_LIBRARY_PATH=%{_libdir}:$LD_LIBRARY_PATH
 pushd build
 make DESTDIR=%{buildroot} install
 rm -rf %{buildroot}/%{_infodir}/dir

@@ -1,0 +1,36 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |vagrant|
+  [["client", 10]].each do |name, num|
+    vagrant.vm.define name do |config|
+      config.vm.box = "centos-6.5"
+      config.vm.box_url = "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-6.5_chef-provisionerless.box"
+      config.vm.provision :shell, path: "bootstrap.sh"
+      config.vm.network "private_network", ip: "10.10.10.#{num}"
+      config.vm.hostname = "#{name}.local"
+      config.vm.provider "virtualbox" do |vb|
+        vb.memory = 1024
+        vb.customize ["modifyvm", :id, "--memory", "1024"]
+        vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      end
+    end
+  end
+
+  [["g01", 11], ["g02", 12]].each do |name, num|
+    vagrant.vm.define name do |config|
+      config.vm.box = "centos-6.5"
+      config.vm.box_url = "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-6.5_chef-provisionerless.box"
+      config.vm.provision :shell, path: "bootstrap_gluster.sh"
+      config.vm.network "private_network", ip: "10.10.10.#{num}"
+      config.vm.hostname = "#{name}.local"
+      config.vm.provider "virtualbox" do |vb|
+        vb.memory = 1024
+        vb.customize ["modifyvm", :id, "--memory", "1024"]
+        vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      end
+    end
+  end
+end

@@ -25,6 +25,7 @@ BuildRequires: %{compiler_family}-mpc
 BuildRequires: %{compiler_family}-isl
 BuildRequires: %{compiler_family}-cloog
 BuildRequires: %{compiler_family}-zlib
+BuildRequires: %{compiler_family}-binutils
 Requires: environment-modules
 Requires: %{compiler_family}-gmp
 Requires: %{compiler_family}-mpfr
@@ -32,6 +33,7 @@ Requires: %{compiler_family}-mpc
 Requires: %{compiler_family}-isl
 Requires: %{compiler_family}-cloog
 Requires: %{compiler_family}-zlib
+Requires: %{compiler_family}-binutils
 
 %description
 %description -n %{compiler_family}-core
@@ -42,6 +44,7 @@ The gcc package contains the GNU Compiler Collection
 
 %build
 mkdir build ; pushd build
+export PATH=%{_bindir}:$PATH
 export LD_LIBRARY_PATH=%{_libdir}
 CC="$CC" \
 CFLAGS="$OPT_FLAGS -L%{_libdir} -I%{_includedir}" \
@@ -86,6 +89,7 @@ make %{_smp_mflags}
 popd
 
 %install
+export PATH=%{_bindir}:$PATH
 %ifarch x86_64
 mkdir -p %{buildroot}/%{_prefix}/lib
 pushd %{buildroot}/%{_prefix}

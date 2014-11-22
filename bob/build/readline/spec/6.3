@@ -1,0 +1,119 @@
+Summary: A library for editing typed command lines
+Name: readline
+Version: 6.3
+Release: 1%{?dist}
+License: BSD
+Group: System Environment/Libraries
+Source: %{name}-%{version}.tar.gz
+Source99: defines.inc
+URL: http://cnswww.cns.cwru.edu/php/chet/readline/rltop.html
+Vendor: CentOS
+Packager: Rob Lyon <rob.lyon@wsu.edu>
+Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-root
+
+%include %{_sourcedir}/defines.inc
+
+%package -n %{package_name}
+Summary: A library for editing typed command lines
+Version: 6.3
+Release: 1%{?dist}
+Group: System Environment/Libraries
+BuildRequires: environment-modules
+BuildRequires: %{compiler_family}-core
+BuildRequires: %{compiler_family}-ncurses
+Requires: environment-modules
+Requires: %{compiler_family}-core
+Requires: %{compiler_family}-ncurses
+
+%description
+%description -n %{package_name}
+The Readline library provides a set of functions that allow users to
+edit command lines. Both Emacs and vi editing modes are available. The
+Readline library includes additional functions for maintaining a list
+of previously-entered command lines for recalling or editing those
+lines, and for performing csh-like history expansion on previous
+commands.
+
+%prep
+%setup -q -n %{name}-%{version}
+
+%build
+mkdir build ; pushd build
+
+export PATH=%{_bindir}:%{_sbindir}:$PATH
+export LD_LIBRARY_PATH=%{_libdir}:$LD_LIBRARY_PATH
+CFLAGS="${CFLAGS:-%optflags}"
+CFLAGS="${CFLAGS} -I%{_includedir} -L%{_libdir}"     ; export CFLAGS
+CXXFLAGS="${CXXFLAGS:-%optflags}"
+CXXFLAGS="${CXXFLAGS} -I%{_includedir} -L%{_libdir}" ; export CXXFLAGS
+FFLAGS="${FFLAGS:-%optflags}"
+FFLAGS="${FFLAGS} -I%{_includedir} -L%{_libdir}"     ; export FFLAGS
+LDFLAGS="${LDFLAGS} -L%{_libdir}"                    ; export LDFLAGS
+
+../configure 	--host=%{_host} --build=%{_build} \
+    			--prefix=%{_prefix} \
+    			--exec-prefix=%{_exec_prefix} \
+    			--bindir=%{_bindir} \
+    			--sbindir=%{_sbindir} \
+    			--sysconfdir=%{_sysconfdir} \
+    			--datadir=%{_datadir} \
+    			--includedir=%{_includedir} \
+    			--libdir=%{_libdir} \
+    			--libexecdir=%{_libexecdir} \
+    			--localstatedir=%{_localstatedir} \
+    			--sharedstatedir=%{_sharedstatedir} \
+    			--mandir=%{_mandir} \
+    			--infodir=%{_infodir} \
+                --with-curses \
+                --enable-multibyte \
+                --enable-shared \
+                --enable-static
+make %{_smp_mflags}
+popd
+
+%install
+export PATH=%{_bindir}:%{_sbindir}:$PATH
+export LD_LIBRARY_PATH=%{_libdir}:$LD_LIBRARY_PATH
+pushd build
+make DESTDIR=%{buildroot} install
+rm -rf %{buildroot}/%{_infodir}/dir
+rm -rf %{buildroot}/%{_datadir}/doc
+popd
+
+%files -n %{package_name}
+%defattr(-,software,software)
+%{_includedir}/readline/chardefs.h
+%{_includedir}/readline/history.h
+%{_includedir}/readline/keymaps.h
+%{_includedir}/readline/readline.h
+%{_includedir}/readline/rlconf.h
+%{_includedir}/readline/rlstdc.h
+%{_includedir}/readline/rltypedefs.h
+%{_includedir}/readline/tilde.h
+%{_infodir}/history.info
+%{_infodir}/readline.info
+%{_infodir}/rluserman.info
+%{_libdir}/libhistory.a
+%{_libdir}/libhistory.so
+%{_libdir}/libhistory.so.6
+%{_libdir}/libhistory.so.6.3
+%{_libdir}/libreadline.a
+%{_libdir}/libreadline.so
+%{_libdir}/libreadline.so.6
+%{_libdir}/libreadline.so.6.3
+%{_mandir}/man3/history.3
+%{_mandir}/man3/readline.3
+%{_datadir}/readline/excallback.c
+%{_datadir}/readline/fileman.c
+%{_datadir}/readline/hist_erasedups.c
+%{_datadir}/readline/hist_purgecmd.c
+%{_datadir}/readline/histexamp.c
+%{_datadir}/readline/manexamp.c
+%{_datadir}/readline/rl-callbacktest.c
+%{_datadir}/readline/rl-fgets.c
+%{_datadir}/readline/rl.c
+%{_datadir}/readline/rlcat.c
+%{_datadir}/readline/rlevent.c
+%{_datadir}/readline/rlptytest.c
+%{_datadir}/readline/rltest.c
+%{_datadir}/readline/rlversion.c

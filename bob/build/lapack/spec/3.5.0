@@ -45,6 +45,7 @@ is coded in Fortran77 and built with gcc.
 %define blas_version 3.2.1
 %package -n %{compiler_family}-blas
 Version: %{blas_version}
+Release: 1%{?dist}
 Summary: The Basic Linear Algebra Subprograms library
 Group: Development/Libraries
 Requires: environment-modules
@@ -56,8 +57,14 @@ provides a number of basic algorithms for numerical algebra.
 
 %prep
 %setup -q -n %{name}-%{lapack_version}
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+cp -f INSTALL/make.inc.gfortran make.inc
 
 %build
+export PATH=%{_bindir}:%{_sbindir}:$PATH
+export LD_LIBRARY_PATH=%{_libdir}:$LD_LIBRARY_PATH
 RPM_OPT_FLAGS="$RPM_OPT_FLAGS -I%{_includedir} -L%{_libdir}"
 RPM_OPT_O_FLAGS=$(echo $RPM_OPT_FLAGS | sed 's|-O2|-O0|')
 export FC=gfortran
@@ -99,31 +106,31 @@ popd
 cp SRC/liblapack* .
 
 %install
+export PATH=%{_bindir}:%{_sbindir}:$PATH
+export LD_LIBRARY_PATH=%{_libdir}:$LD_LIBRARY_PATH
 rm -fr ${RPM_BUILD_ROOT}
 mkdir -p ${RPM_BUILD_ROOT}%{_libdir}
 
-for f in liblapack.so.%{package_version} libblas.so.%{blas_version} libblas.a liblapack.a; do
+for f in liblapack.so.%{lapack_version} libblas.so.%{blas_version} libblas.a liblapack.a; do
   cp -f $f ${RPM_BUILD_ROOT}%{_libdir}/$f
 done
 
 cd ${RPM_BUILD_ROOT}%{_libdir}
-ln -sf liblapack.so.%{version} liblapack.so
-ln -sf liblapack.so.%{version} liblapack.so.3
-ln -sf liblapack.so.%{version} liblapack.so.3.5
+ln -sf liblapack.so.%{lapack_version} liblapack.so
+ln -sf liblapack.so.%{lapack_version} liblapack.so.3
+ln -sf liblapack.so.%{lapack_version} liblapack.so.3.5
 ln -sf libblas.so.%{blas_version} libblas.so
 ln -sf libblas.so.%{blas_version} libblas.so.3
 ln -sf libblas.so.%{blas_version} libblas.so.3.2
 
 %files -n %{package_name}
 %defattr(-,software,software)
-%files
-%defattr(-,software,software)
-%{package_path}/%{_lib}/liblapack.so.*
-%{package_path}/%{_lib}/liblapack.so
-%{package_path}/%{_lib}/liblapack*.a
+%{_libdir}/liblapack.so.*
+%{_libdir}/liblapack.so
+%{_libdir}/liblapack*.a
 
 %files -n %{compiler_family}-blas
 %defattr(-,software,software)
-%{package_path}/%{_lib}/libblas.so.*
-%{package_path}/%{_lib}/libblas.so
-%{package_path}/%{_lib}/libblas*.a
+%{_libdir}/libblas.so.*
+%{_libdir}/libblas.so
+%{_libdir}/libblas*.a
