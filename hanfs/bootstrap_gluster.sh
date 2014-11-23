@@ -8,7 +8,7 @@ if ! [[ -f epel-release-6-8.noarch.rpm ]] ; then
 	yum -y localinstall epel-release-6-8.noarch.rpm
 fi
 
-if ! [[ -f /etc/yum.repos.d/glusterfs.repo ]] ; then 
+if ! [[ -f /etc/yum.repos.d/glusterfs.repo ]] ; then
 	curl http://download.gluster.org/pub/gluster/glusterfs/3.6/LATEST/EPEL.repo/glusterfs-epel.repo > /etc/yum.repos.d/glusterfs.repo
 fi
 
@@ -23,6 +23,7 @@ chkconfig glusterd on
 yum -y install corosync
 yum -y install pacemaker
 yum -y install cman
+yum -y install pcs ccs resource-agents
 
 cp /vagrant/cluster.conf /etc/cluster/cluster.conf
 cp /vagrant/corosync.conf /etc/corosync/corosync.conf
@@ -30,5 +31,5 @@ cp /vagrant/pcmk /etc/corosync/service.d/pcmk
 
 /etc/init.d/cman start
 chkconfig cman on
-
-
+/etc/init.d/pacemaker start
+chkconfig pacemaker on
