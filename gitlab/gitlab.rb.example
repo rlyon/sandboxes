@@ -1,0 +1,23 @@
+external_url 'https://gitlab.local'
+git_data_dir "/mnt/nas/gitlab-data"
+nginx['redirect_http_to_https'] = true
+
+gitlab_rails['ldap_enabled'] = true
+gitlab_rails['ldap_servers'] = YAML.load <<-EOS
+main: # 'main' is the GitLab 'provider ID' of this LDAP server
+  label: 'AD'
+  host: 'ad.example.com'
+  port: 636
+  uid: 'cn'
+  method: 'ssl'
+  bind_dn: 'gitlab.dev'
+  password: 'superlong password'
+  active_directory: true
+  allow_username_or_email_login: false
+  base: 'ou=users,dc=ad,dc=example,dc=com'
+  # user_filter: '(memberof=admins)'
+  ## EE only
+  # group_base: ''
+  # admin_group: ''
+  # sync_ssh_keys: false
+EOS
